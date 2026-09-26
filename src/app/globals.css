@@ -730,6 +730,81 @@ body::after {
   .env-rain { display: none; }
 }
 
+/* ── Detalle: caja de regalo que se abre ── */
+.gb-box {
+  display: block; margin: 1.35rem auto 0; padding: 0;
+  border: none; background: none; cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.gb-box svg {
+  width: min(190px, 52vw); height: auto; display: block;
+  filter: drop-shadow(0 12px 26px rgba(22,32,46,.22));
+}
+.gb-lid {
+  transform-origin: 100px 78px;
+  transition: transform .5s cubic-bezier(.34,1.4,.5,1);
+}
+.gb-box:hover .gb-lid,
+.gb-box:focus-visible .gb-lid { transform: translateY(-13px) rotate(-5deg); }
+.gb-cta {
+  display: block; margin-top: .9rem;
+  font-family: var(--font-sans), sans-serif;
+  text-transform: uppercase; letter-spacing: .26em;
+  font-size: .72rem; font-weight: 600; color: var(--olive-soft);
+}
+
+.gb-backdrop {
+  position: fixed; inset: 0; z-index: 200;
+  display: flex; align-items: center; justify-content: center; padding: 22px;
+  background: rgba(16,28,44,.62);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+}
+.gb-panel {
+  position: relative; width: 100%; max-width: 380px; text-align: center;
+  padding: 2.4rem 1.5rem 1.9rem;
+  background-color: var(--bg-cream);
+  background-image: url("/paper-linen.jpg");
+  background-blend-mode: luminosity;
+  background-size: cover;
+  border-radius: 3px;
+  box-shadow: 0 24px 60px rgba(10,20,36,.45);
+  max-height: 88dvh; overflow-y: auto;
+}
+.gb-panel::before {
+  content: ''; position: absolute; inset: 8px;
+  border: 1.3px solid var(--gold-antique); border-radius: 2px; pointer-events: none;
+}
+.gb-panel::after {
+  content: ''; position: absolute; inset: 13px;
+  border: .7px solid var(--green-line); opacity: .7; border-radius: 1px; pointer-events: none;
+}
+.gb-close {
+  position: absolute; top: 14px; right: 14px;
+  width: 34px; height: 34px; border-radius: 50%;
+  border: 1px solid var(--beige); background: rgba(255,255,255,.75);
+  color: var(--olive-primary); cursor: pointer; padding: 0; z-index: 2;
+  display: flex; align-items: center; justify-content: center;
+}
+.gb-close svg { width: 15px; height: 15px; }
+.gb-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  margin-top: 1.05rem; padding: .9rem 1rem;
+  background: rgba(255,253,249,.72);
+  border: 1px solid var(--beige); border-radius: 12px;
+}
+.gb-copy {
+  flex-shrink: 0;
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: .6rem .85rem; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--green-deep); background: transparent;
+  color: var(--green-deep);
+  font-family: var(--font-sans), sans-serif;
+  text-transform: uppercase; letter-spacing: .16em;
+  font-size: .68rem; font-weight: 600;
+  transition: background .2s, color .2s;
+}
+.gb-copy:hover { background: var(--green-deep); color: var(--bg-cream); }
+
 /* ── Muro de mensajes ── */
 .msg-input {
   width: 100%;

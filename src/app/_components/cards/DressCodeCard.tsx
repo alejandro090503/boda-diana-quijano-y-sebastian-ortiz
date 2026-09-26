@@ -7,7 +7,9 @@ import { Flourish } from "../Ornaments";
 // (marfil, blanco, durazno claro, champan y los azules cielo de la boda),
 // agrupados en tres muestras para que se lean de un vistazo.
 const reservados = [
-  { hex: "#FFFFF0", nombre: "Blanco" },
+  { hex: "#FFFFFF", nombre: "Blanco" },
+  { hex: "#FFFFF0", nombre: "Ivory" },
+  { hex: "#E8CFB8", nombre: "Nude" },
   { hex: "#F7E7CE", nombre: "Champán" },
   { hex: "#89CFF0", nombre: "Azul cielo" },
 ];
@@ -73,7 +75,7 @@ export default function DressCodeCard() {
 
       <Stagger>
         <div
-          className="flex justify-center gap-6 mt-5"
+          className="flex flex-wrap justify-center gap-x-5 gap-y-4 mt-5 px-2"
           style={{ position: "relative", zIndex: 10 }}
         >
           {reservados.map((c) => (

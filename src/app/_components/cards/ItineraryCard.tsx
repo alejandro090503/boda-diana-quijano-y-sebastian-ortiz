@@ -1,6 +1,8 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { motion } from "framer-motion";
 import AnimatedCard, { Stagger } from "../AnimatedCard";
 import { OliveBranch } from "../Ornaments";
 
@@ -23,7 +25,7 @@ const events: Evt[] = [
   {
     time: "2:00 p.m.",
     label: "La celebración",
-    desc: "Da inicio la fiesta que hemos soñado compartir contigo.",
+    desc: "Da inicio la fiesta que hemos soñado compartir con ustedes.",
     icon: "/iconos/novios.png",
   },
   {
@@ -46,6 +48,43 @@ const events: Evt[] = [
   },
 ];
 export default function ItineraryCard() {
+  const pista = useRef<HTMLDivElement>(null);
+  const [avance, setAvance] = useState(0);
+
+  /* Avance del recorrido: 0 cuando la lista entra por abajo de la pantalla y
+     1 cuando termina de salir por arriba. Se mide en el scroll con rAF en vez
+     de con ScrollTrigger porque esta invitacion no carga GSAP. */
+  useEffect(() => {
+    const el = pista.current;
+    if (!el) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setAvance(1);
+      return;
+    }
+    let pedido = 0;
+    const medir = () => {
+      pedido = 0;
+      const r = el.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const inicio = vh * 0.82;
+      const total = r.height + inicio - vh * 0.25;
+      const p = total <= 0 ? 1 : (inicio - r.top) / total;
+      setAvance(Math.min(Math.max(p, 0), 1));
+    };
+    const alScroll = () => {
+      if (pedido) return;
+      pedido = requestAnimationFrame(medir);
+    };
+    medir();
+    window.addEventListener("scroll", alScroll, { passive: true });
+    window.addEventListener("resize", alScroll);
+    return () => {
+      if (pedido) cancelAnimationFrame(pedido);
+      window.removeEventListener("scroll", alScroll);
+      window.removeEventListener("resize", alScroll);
+    };
+  }, []);
+
   return (
     <AnimatedCard className="card-arch tex-emboss" anim="slideRight">
       <Stagger>
@@ -70,20 +109,44 @@ export default function ItineraryCard() {
         </div>
       </Stagger>
 
-      <div className="relative">
-        {/* línea vertical conectora */}
+      <div className="relative" ref={pista}>
+        {/* riel apagado */}
         <div
           className="absolute top-5 bottom-5"
+          style={{ left: 23, width: 1.5, background: "var(--beige)", opacity: 0.65 }}
+        />
+        {/* El recorrido: la linea se llena conforme baja el scroll y arrastra
+            una perla de champan, que es lo que pidio el cliente. */}
+        <div
+          className="absolute top-5"
           style={{
             left: 23,
             width: 1.5,
-            background: "linear-gradient(var(--gold-antique), var(--beige))",
-            opacity: 0.5,
+            height: `calc(${avance} * (100% - 40px))`,
+            background: "linear-gradient(var(--gold-antique), var(--green-line))",
+            transition: "height .18s linear",
           }}
+        />
+        <div
+          className="absolute"
+          style={{
+            left: 18,
+            top: `calc(20px + ${avance} * (100% - 40px))`,
+            width: 11,
+            height: 11,
+            borderRadius: "50%",
+            background: "radial-gradient(circle at 35% 35%, #FFF6E2, #D4AF37 60%, #8C6F43)",
+            boxShadow: "0 0 10px rgba(212,175,55,.75)",
+            opacity: avance > 0.002 && avance < 0.999 ? 1 : 0,
+            transition: "top .18s linear, opacity .3s ease",
+            zIndex: 11,
+          }}
+          aria-hidden="true"
         />
 
         {events.map((evt, i) => {
           const isLast = i === events.length - 1;
+          const activo = avance >= (i + 0.35) / events.length;
           return (
             <Stagger key={i}>
               <div
@@ -91,14 +154,22 @@ export default function ItineraryCard() {
                 style={{ paddingBottom: isLast ? 0 : 46 }}
               >
                 {/* nodo con icono a mano alzada */}
-                <div
+                <motion.div
                   className="relative z-10 shrink-0 flex items-center justify-center rounded-full mt-0.5"
+                  animate={{
+                    scale: activo ? 1.08 : 1,
+                    borderColor: activo ? "var(--green-deep)" : "var(--gold-antique)",
+                    boxShadow: activo
+                      ? "0 0 0 4px rgba(212,175,55,.16), 0 3px 10px rgba(30,42,56,.16)"
+                      : "0 2px 6px rgba(30,42,56,0.1)",
+                  }}
+                  transition={{ duration: 0.35, ease: "easeOut" }}
                   style={{
                     width: 42,
                     height: 42,
                     backgroundColor: "var(--bg-cream)",
-                    border: `1px solid var(--gold-antique)`,
-                    boxShadow: "0 2px 6px rgba(59,48,40,0.1)",
+                    borderWidth: 1,
+                    borderStyle: "solid",
                   }}
                 >
                   <Image
@@ -108,7 +179,7 @@ export default function ItineraryCard() {
                     height={30}
                     style={{ objectFit: "contain" }}
                   />
-                </div>
+                </motion.div>
 
                 {/* contenido */}
                 <div className="text-left flex-1 min-w-0 pt-1">

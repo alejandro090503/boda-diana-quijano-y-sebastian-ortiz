@@ -47,18 +47,6 @@ export default function CeremonyCard() {
             {DIRECCION_IGLESIA}
           </p>
 
-          <p
-            className="font-serif italic px-4 mx-auto mb-8"
-            style={{ color: "var(--terracotta)", fontSize: "1.15rem", lineHeight: 1.6, maxWidth: "330px" }}
-          >
-            &ldquo;Todo tiene su tiempo, y todo lo que se quiere debajo del
-            cielo tiene su hora.&rdquo;
-            <br />
-            <span className="font-sans-label" style={{ fontSize: "0.85rem", letterSpacing: "0.15em", fontWeight: 600 }}>
-              Eclesiastés 3:1
-            </span>
-          </p>
-
           <a
             href={MAPS_IGLESIA}
             target="_blank"

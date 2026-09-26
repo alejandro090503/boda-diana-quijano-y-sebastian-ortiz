@@ -5,6 +5,7 @@ import { AnimatePresence } from "framer-motion";
 import EnvelopeLoader from "./EnvelopeLoader";
 import AudioPlayer, { type AudioAPI } from "./AudioPlayer";
 import Petals from "./Petals";
+import CoverCard from "./cards/CoverCard";
 import HeroCard from "./cards/HeroCard";
 import VerseCard from "./cards/VerseCard";
 import CountdownCard from "./cards/CountdownCard";
@@ -19,6 +20,8 @@ import AdultsCard from "./cards/AdultsCard";
 import NotesCard from "./cards/NotesCard";
 import HotelsCard from "./cards/HotelsCard";
 import GiftsCard from "./cards/GiftsCard";
+import GiftBoxCard from "./cards/GiftBoxCard";
+import AlbumCard from "./cards/AlbumCard";
 import RSVPCard from "./cards/RSVPCard";
 import { FECHA_PUNTEADA } from "../_data/fecha";
 
@@ -44,6 +47,8 @@ export default function InvitationClient() {
 
       {phase === "cards" && <Petals />}
 
+      {phase === "cards" && <CoverCard />}
+
       {phase === "cards" && (
         <main className="relative z-10 flex flex-col items-center py-8 px-4 max-w-[500px] mx-auto">
           <HeroCard />
@@ -60,6 +65,8 @@ export default function InvitationClient() {
           <NotesCard />
           <HotelsCard />
           <GiftsCard />
+          <GiftBoxCard />
+          <AlbumCard />
           <RSVPCard />
 
           <footer className="text-center mt-4 mb-8">

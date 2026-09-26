@@ -5,23 +5,39 @@ import AnimatedCard, { Stagger } from "../AnimatedCard";
 import { OliveBranch } from "../Ornaments";
 import { FECHA_BODA } from "../../_data/fecha";
 
+/** La ceremonia es a las 11:00 de la manana. */
+const HORA_CEREMONIA = 11;
+
+type Resto = { dias: number; horas: number; minutos: number };
+
+function calcular(fecha: Date): Resto {
+  const objetivo = new Date(fecha);
+  objetivo.setHours(HORA_CEREMONIA, 0, 0, 0);
+  const ms = Math.max(objetivo.getTime() - Date.now(), 0);
+  return {
+    dias: Math.floor(ms / 86400000),
+    horas: Math.floor((ms % 86400000) / 3600000),
+    minutos: Math.floor((ms % 3600000) / 60000),
+  };
+}
+
 export default function CountdownCard() {
-  const [days, setDays] = useState<number | null>(null);
+  const [resto, setResto] = useState<Resto | null>(null);
 
   useEffect(() => {
     const fecha = FECHA_BODA;
     if (!fecha) return;
-    const compute = () => {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      const diffMs = fecha.getTime() - today.getTime();
-      const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
-      setDays(Math.max(diffDays, 0));
-    };
-    compute();
-    const interval = setInterval(compute, 1000 * 60 * 60);
-    return () => clearInterval(interval);
+    const tick = () => setResto(calcular(fecha));
+    tick();
+    const id = setInterval(tick, 20000);
+    return () => clearInterval(id);
   }, []);
+
+  const casillas: { valor: number | null; etiqueta: string }[] = [
+    { valor: resto ? resto.dias : null, etiqueta: "Días" },
+    { valor: resto ? resto.horas : null, etiqueta: "Horas" },
+    { valor: resto ? resto.minutos : null, etiqueta: "Minutos" },
+  ];
 
   return (
     <AnimatedCard className="tex-count text-center py-9" anim="zoom">
@@ -31,62 +47,60 @@ export default function CountdownCard() {
         </div>
       </Stagger>
 
-      {FECHA_BODA ? (
-        <>
-          <Stagger>
-            <p className="font-script" style={{ color: "var(--olive-primary)", fontSize: "3.2rem", lineHeight: 1.1 }}>
-              Faltan
-            </p>
-          </Stagger>
+      <Stagger>
+        <p className="font-script" style={{ color: "var(--olive-primary)", fontSize: "2.9rem", lineHeight: 1.1 }}>
+          Faltan
+        </p>
+      </Stagger>
 
-          <Stagger>
-            <p
-              className="font-script"
-              style={{
-                color: "var(--olive-primary)",
-                fontSize: "5rem",
-                lineHeight: 1,
-                margin: "0.5rem 0",
-                minHeight: "5rem",
-              }}
-            >
-              {days === null ? " " : days}
-            </p>
-          </Stagger>
-
-          <Stagger>
-            <p className="font-serif italic text-center" style={{ color: "var(--ink-dark)", fontSize: "1.3rem" }}>
-              {days ?? "…"} días para el gran día
-            </p>
-          </Stagger>
-        </>
-      ) : (
-        /* PENDIENTE: fecha del evento. Al ponerla en src/app/_data/fecha.ts
-           esta tarjeta vuelve sola al contador de días. */
-        <>
-          <Stagger>
-            <p className="font-script" style={{ color: "var(--olive-primary)", fontSize: "3.2rem", lineHeight: 1.15 }}>
-              Muy pronto
-            </p>
-          </Stagger>
-
-          <Stagger>
-            <div className="fleuron" style={{ margin: "0.9rem auto" }}>
-              <span style={{ color: "var(--rose-deco)", fontSize: "1.6rem" }}>&#10086;</span>
+      <Stagger>
+        <div className="flex justify-center items-start gap-2 mt-4 mb-1">
+          {casillas.map((c, i) => (
+            <div key={c.etiqueta} className="flex items-start gap-2">
+              {i > 0 && (
+                <span
+                  className="font-serif"
+                  style={{ color: "var(--gold-antique)", fontSize: "2.4rem", lineHeight: 1.1, opacity: 0.55 }}
+                  aria-hidden="true"
+                >
+                  &middot;
+                </span>
+              )}
+              <div style={{ minWidth: 74 }}>
+                <p
+                  className="font-serif font-semibold"
+                  style={{
+                    color: "var(--olive-primary)",
+                    fontSize: "3rem",
+                    lineHeight: 1,
+                    fontVariantNumeric: "tabular-nums",
+                  }}
+                >
+                  {c.valor === null ? "––" : c.valor}
+                </p>
+                <p
+                  className="font-sans-label"
+                  style={{
+                    color: "var(--olive-soft)",
+                    fontSize: "0.72rem",
+                    fontWeight: 600,
+                    letterSpacing: "0.22em",
+                    marginTop: "0.4rem",
+                  }}
+                >
+                  {c.etiqueta}
+                </p>
+              </div>
             </div>
-          </Stagger>
+          ))}
+        </div>
+      </Stagger>
 
-          <Stagger>
-            <p
-              className="font-serif italic mx-auto"
-              style={{ color: "var(--ink-dark)", fontSize: "1.3rem", lineHeight: 1.6, maxWidth: "290px" }}
-            >
-              Estamos afinando los últimos detalles. En cuanto tengamos la fecha
-              definitiva, aquí mismo verás la cuenta regresiva.
-            </p>
-          </Stagger>
-        </>
-      )}
+      <Stagger>
+        <p className="font-serif italic mt-4" style={{ color: "var(--ink-dark)", fontSize: "1.25rem" }}>
+          para el gran día
+        </p>
+      </Stagger>
     </AnimatedCard>
   );
 }

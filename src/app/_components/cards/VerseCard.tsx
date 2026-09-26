@@ -16,17 +16,10 @@ export default function VerseCard() {
         <img src="/assets/sobre-motivo-chico.png" alt="" style={{ width: 120, opacity: 0.75 }} />
       </div>
       <p
-        className="font-sans-label"
-        style={{ color: "var(--rose-ink)", fontSize: "0.85rem", fontWeight: 600, marginBottom: "0.9rem" }}
-      >
-        Génesis 2:24
-      </p>
-      <p
         className="font-serif italic"
-        style={{ color: "var(--ink-dark)", fontSize: "1.3rem", lineHeight: 1.75 }}
+        style={{ color: "var(--ink-dark)", fontSize: "1.45rem", lineHeight: 1.8 }}
       >
-        &ldquo;Por tanto, dejará el hombre a su padre y a su madre, y se unirá a su
-        mujer, y serán una sola carne.&rdquo;
+        &ldquo;Te elegiría a ti una y mil veces, en esta y en todas mis vidas.&rdquo;
       </p>
     </motion.section>
   );

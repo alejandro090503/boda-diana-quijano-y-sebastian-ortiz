@@ -106,9 +106,7 @@ export default function HeroCard() {
               <h1 className="font-script px-2" style={{ color: "var(--olive-primary)", fontSize: "3.6rem", lineHeight: 1 }}>
                 Sebastián
               </h1>
-              <p className="font-serif italic px-2" style={{ color: "var(--olive-primary)", fontSize: "1.4rem", letterSpacing: "0.05em" }}>
-                Ortiz
-              </p>
+
             </Stagger>
             <Stagger>
               <p className="font-script my-2 foil" style={{ fontSize: "3.4rem", lineHeight: 1 }}>
@@ -119,9 +117,8 @@ export default function HeroCard() {
               <h1 className="font-script px-2" style={{ color: "var(--olive-primary)", fontSize: "3.6rem", lineHeight: 1 }}>
                 Diana
               </h1>
-              <p className="font-serif italic px-2 mb-3" style={{ color: "var(--olive-primary)", fontSize: "1.4rem", letterSpacing: "0.05em" }}>
-                Quijano
-              </p>
+
+              <div className="mb-3" />
             </Stagger>
 
             <Stagger>
