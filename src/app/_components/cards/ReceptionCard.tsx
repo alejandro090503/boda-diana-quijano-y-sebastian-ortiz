@@ -82,7 +82,7 @@ export default function ReceptionCard() {
         alt=""
         className="absolute pointer-events-none"
         /* el sello baja a la esquina inferior: arriba lo pisaba el boton de ubicacion */
-        style={{ width: 66, height: "auto", bottom: -18, left: -12, zIndex: 30, transform: "rotate(-12deg)", filter: "drop-shadow(0 5px 10px rgba(22,32,46,0.35))" }}
+        style={{ width: 62, height: "auto", bottom: -26, left: -22, zIndex: 30, transform: "rotate(-12deg)", filter: "drop-shadow(0 5px 10px rgba(22,32,46,0.35))" }}
       />
       {/* El cliente pidio el boton arriba del todo, tocando el marco de la
           tarjeta, en vez de al final de la seccion. */}
