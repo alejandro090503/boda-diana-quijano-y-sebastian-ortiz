@@ -1,45 +1,79 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { DIA, MES, ANIO } from "../../_data/fecha";
 
 /**
  * Portada a pantalla completa con la foto que eligio el cliente, al estilo de
- * la invitacion que mando de referencia: foto de fondo, velo degradado hacia
- * el papel y los nombres en caligrafia encima.
+ * la invitacion que mando de referencia: foto de fondo, velo degradado y los
+ * nombres en caligrafia encima.
+ *
+ * El paso a la primera tarjeta no es un corte: la foto se disuelve con una
+ * mascara hacia abajo, que deja ver el marmol del fondo (es una capa fija del
+ * body), y ademas al hacer scroll la portada entera se apaga y sube un poco
+ * mientras la invitacion entra por debajo.
  */
+
+/* La mascara va en la capa de la FOTO, no en la seccion: si se aplicara a la
+   seccion recortaria tambien el velo y los nombres. */
+const MASCARA =
+  "linear-gradient(to bottom, #000 0%, #000 56%, rgba(0,0,0,.86) 72%, rgba(0,0,0,.45) 87%, rgba(0,0,0,0) 100%)";
+
 export default function CoverCard() {
+  const seccion = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: seccion,
+    offset: ["start start", "end start"],
+  });
+
+  // la foto se va con el scroll; el texto se desvanece antes que ella
+  const fotoOpacidad = useTransform(scrollYProgress, [0, 0.78], [1, 0]);
+  const fotoY = useTransform(scrollYProgress, [0, 1], ["0%", "11%"]);
+  const fotoEscala = useTransform(scrollYProgress, [0, 1], [1, 1.06]);
+  const textoOpacidad = useTransform(scrollYProgress, [0, 0.42], [1, 0]);
+  const textoY = useTransform(scrollYProgress, [0, 0.6], [0, -38]);
+
   return (
     <section
+      ref={seccion}
       className="relative w-full"
       style={{ height: "100dvh", overflow: "hidden" }}
     >
-      <div
+      <motion.div
         className="absolute inset-0"
         style={{
           backgroundImage: "url('/portada.jpg')",
           backgroundSize: "cover",
-          backgroundPosition: "center 34%",
+          backgroundPosition: "center 42%",
+          maskImage: MASCARA,
+          WebkitMaskImage: MASCARA,
+          opacity: fotoOpacidad,
+          y: fotoY,
+          scale: fotoEscala,
         }}
       />
 
-      {/* Velo: arriba casi limpio para que se vea la foto, abajo se funde con
-          el marfil del papel para que la portada entregue a la primera tarjeta. */}
-      <div
+      {/* Velo: arriba casi limpio para que se vea la foto; abajo se apaga junto
+          con ella y entrega el marmol del fondo sin ningun borde duro. */}
+      <motion.div
         className="absolute inset-0"
         style={{
           background:
             "linear-gradient(to bottom," +
             "rgba(22,50,92,0.10) 0%," +
             "rgba(22,50,92,0.05) 34%," +
-            "rgba(22,50,92,0.40) 64%," +
-            "rgba(22,50,92,0.82) 84%," +
-            "rgba(248,244,236,0.96) 97%," +
-            "#F8F4EC 100%)",
+            "rgba(22,50,92,0.40) 62%," +
+            "rgba(22,50,92,0.62) 78%," +
+            "rgba(22,50,92,0.22) 92%," +
+            "rgba(22,50,92,0) 100%)",
+          opacity: fotoOpacidad,
         }}
       />
 
-      <div className="absolute inset-x-0 bottom-0 px-7 pb-[6.5vh] text-center">
+      <motion.div
+        className="absolute inset-x-0 bottom-0 px-7 pb-[11vh] text-center"
+        style={{ opacity: textoOpacidad, y: textoY }}>
         <motion.p
           className="font-sans-label"
           style={{ color: "#F7E7CE", fontSize: "0.74rem", fontWeight: 600, letterSpacing: "0.34em" }}
@@ -122,7 +156,7 @@ export default function CoverCard() {
         >
           M&eacute;rida, Yucat&aacute;n
         </motion.p>
-      </div>
+      </motion.div>
     </section>
   );
 }

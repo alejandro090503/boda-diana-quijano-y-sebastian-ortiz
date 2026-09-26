@@ -16,7 +16,6 @@ import ItineraryCard from "./cards/ItineraryCard";
 import GalleryCard from "./cards/GalleryCard";
 import WeatherCard from "./cards/WeatherCard";
 import DressCodeCard from "./cards/DressCodeCard";
-import AdultsCard from "./cards/AdultsCard";
 import NotesCard from "./cards/NotesCard";
 import HotelsCard from "./cards/HotelsCard";
 import GiftsCard from "./cards/GiftsCard";
@@ -61,7 +60,6 @@ export default function InvitationClient() {
           <GalleryCard />
           <WeatherCard />
           <DressCodeCard />
-          <AdultsCard />
           <NotesCard />
           <HotelsCard />
           <GiftsCard />
