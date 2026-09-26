@@ -81,10 +81,30 @@ export default function ReceptionCard() {
         src="/assets/sello-sage.png"
         alt=""
         className="absolute pointer-events-none"
-        style={{ width: 66, height: "auto", top: -16, left: -12, zIndex: 30, transform: "rotate(-12deg)", filter: "drop-shadow(0 5px 10px rgba(31,28,25,0.35))" }}
+        /* el sello baja a la esquina inferior: arriba lo pisaba el boton de ubicacion */
+        style={{ width: 66, height: "auto", bottom: -18, left: -12, zIndex: 30, transform: "rotate(-12deg)", filter: "drop-shadow(0 5px 10px rgba(22,32,46,0.35))" }}
       />
+      {/* El cliente pidio el boton arriba del todo, tocando el marco de la
+          tarjeta, en vez de al final de la seccion. */}
       <Stagger>
-        <p className="font-script mb-1" style={{ color: "var(--olive-primary)", fontSize: "2.7rem", lineHeight: 1.1, marginTop: "1.75rem" }}>
+        <div className="flex justify-center" style={{ marginTop: "-1.1rem", marginBottom: "0.9rem" }}>
+          <a
+            href="https://maps.app.goo.gl/dsEXD8yhXgQPwzqdA"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-map"
+          >
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
+              <circle cx="12" cy="9" r="2.5" />
+            </svg>
+            IR A UBICACIÓN
+          </a>
+        </div>
+      </Stagger>
+
+      <Stagger>
+        <p className="font-script mb-1" style={{ color: "var(--olive-primary)", fontSize: "2.7rem", lineHeight: 1.1 }}>
           Recepción
         </p>
       </Stagger>
@@ -122,22 +142,6 @@ export default function ReceptionCard() {
         </div>
       </Stagger>
 
-      <Stagger>
-        <div className="mt-8">
-          <a
-            href="https://maps.app.goo.gl/dsEXD8yhXgQPwzqdA"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-map btn-olive"
-          >
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
-              <circle cx="12" cy="9" r="2.5" />
-            </svg>
-            IR A UBICACIÓN
-          </a>
-        </div>
-      </Stagger>
     </AnimatedCard>
   );
 }

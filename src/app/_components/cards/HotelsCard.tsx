@@ -1,30 +1,56 @@
 "use client";
 
+import { useCallback, useEffect, useState } from "react";
 import AnimatedCard, { Stagger } from "../AnimatedCard";
 
-// Los tres hoteles que recomendo el cliente, todos sobre Paseo de Montejo.
-const hotels = [
+/**
+ * Carrusel lateral con foto del lugar, al estilo del hospedaje de
+ * boda-roxana-y-omar, montado sobre la tarjeta de papel de esta invitacion.
+ * Los tres hoteles los recomendo el cliente; todos sobre Paseo de Montejo.
+ */
+const hoteles = [
   {
-    name: "NH Collection Mérida Paseo Montejo",
-    zona: "Calle 60 346 · Zona Paseo Montejo",
+    name: "NH Collection Mérida",
+    zona: "Paseo Montejo · Calle 60 346",
+    foto: "/hoteles/nh-1-sq.jpg",
     mapUrl: "https://maps.app.goo.gl/Y3ByGxws2EZy8ui68",
     webUrl: "https://www.nh-hotels.com/es/hotel/nh-collection-merida-paseo-montejo",
   },
   {
-    name: "City Express Plus by Marriott Mérida",
-    zona: "Calle 60 346 · Centro",
+    name: "City Express Plus",
+    zona: "By Marriott · Calle 60 346",
+    foto: "/hoteles/ce-1-sq.jpg",
     mapUrl: "https://maps.app.goo.gl/LwM1bf6svGFJzbW37",
     webUrl: "https://www.marriott.com/es/hotels/midcy-city-express-plus-by-marriott-merida/overview/",
   },
   {
-    name: "Holiday Inn Mérida by IHG",
-    zona: "Av. Colón 498 · entre Paseo de Montejo y Calle 60",
+    name: "Holiday Inn Mérida",
+    zona: "Av. Colón 498 · Centro",
+    foto: "/hoteles/hi-3-sq.jpg",
     mapUrl: "https://maps.app.goo.gl/LjfbBMsxLEXASiua7",
     webUrl: "https://www.ihg.com/holidayinn/hotels/us/es/merida/midmx/hoteldetail",
   },
 ];
 
 export default function HotelsCard() {
+  const [i, setI] = useState(0);
+  const [tocado, setTocado] = useState(false);
+
+  const ir = useCallback((d: number) => {
+    setTocado(true);
+    setI((n) => (n + d + hoteles.length) % hoteles.length);
+  }, []);
+
+  // avance solo hasta que el invitado toma el control
+  useEffect(() => {
+    if (tocado) return;
+    const t = setInterval(() => setI((n) => (n + 1) % hoteles.length), 4200);
+    return () => clearInterval(t);
+  }, [tocado]);
+
+  // deslizar con el dedo
+  const [x0, setX0] = useState<number | null>(null);
+
   return (
     <AnimatedCard className="tex-emboss text-center py-9" anim="blurRise">
       <Stagger>
@@ -45,43 +71,78 @@ export default function HotelsCard() {
       </Stagger>
 
       <Stagger>
-        <p className="font-serif italic text-lg mb-5 px-2" style={{ color: "var(--ink-dark)", lineHeight: 1.6 }}>
+        <p className="font-serif italic text-lg px-2" style={{ color: "var(--ink-dark)", lineHeight: 1.6 }}>
           Si vienes de fuera, estas son nuestras
-          <br />recomendaciones cerca de la recepción
+          <br />recomendaciones cerca de la recepci&oacute;n
         </p>
       </Stagger>
 
-      {hotels.map((hotel, i) => (
-        <Stagger key={hotel.name}>
+      <Stagger>
+        <div className="hosp-carousel">
+          <button className="hosp-arrow prev" onClick={() => ir(-1)} aria-label="Hotel anterior" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="15 18 9 12 15 6" /></svg>
+          </button>
+          <button className="hosp-arrow next" onClick={() => ir(1)} aria-label="Hotel siguiente" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="9 18 15 12 9 6" /></svg>
+          </button>
+
           <div
-            className={i > 0 ? "mt-5 pt-5" : ""}
-            style={i > 0 ? { borderTop: "1px solid var(--beige)" } : {}}
+            className="hosp-viewport"
+            onTouchStart={(e) => setX0(e.touches[0].clientX)}
+            onTouchEnd={(e) => {
+              if (x0 === null) return;
+              const dx = e.changedTouches[0].clientX - x0;
+              if (Math.abs(dx) > 40) ir(dx < 0 ? 1 : -1);
+              setX0(null);
+            }}
           >
-            <p className="font-serif font-semibold" style={{ color: "var(--ink-dark)", fontSize: "1.5rem", lineHeight: 1.3 }}>
-              {hotel.name}
-            </p>
-            <p className="font-serif" style={{ color: "var(--terracotta)", fontSize: "1.08rem", lineHeight: 1.5, marginTop: "0.15rem" }}>
-              {hotel.zona}
-            </p>
-            <div className="mt-3 flex flex-wrap justify-center gap-2">
-              <a href={hotel.webUrl} target="_blank" rel="noopener noreferrer" className="btn-map">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                  <circle cx="12" cy="12" r="9" />
-                  <path d="M3 12h18M12 3a15 15 0 010 18M12 3a15 15 0 000 18" />
-                </svg>
-                RESERVAR
-              </a>
-              <a href={hotel.mapUrl} target="_blank" rel="noopener noreferrer" className="btn-map btn-olive">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
-                  <circle cx="12" cy="9" r="2.5" />
-                </svg>
-                VER MAPA
-              </a>
+            <div className="hosp-track" style={{ transform: `translateX(-${i * 100}%)` }}>
+              {hoteles.map((h) => (
+                <div className="hosp-slide" key={h.name}>
+                  <div className="hosp-photo">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={h.foto} alt={h.name} />
+                  </div>
+                  <p className="font-serif font-semibold" style={{ color: "var(--ink-dark)", fontSize: "1.5rem", lineHeight: 1.3 }}>
+                    {h.name}
+                  </p>
+                  <p className="font-serif" style={{ color: "var(--terracotta)", fontSize: "1.08rem", lineHeight: 1.5, margin: "0.15rem 0 0.9rem" }}>
+                    {h.zona}
+                  </p>
+                  <div className="flex flex-wrap justify-center gap-2">
+                    <a href={h.webUrl} target="_blank" rel="noopener noreferrer" className="btn-map">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                        <rect x="3" y="7" width="18" height="14" rx="2" />
+                        <path d="M7 7V5a5 5 0 0110 0v2" />
+                      </svg>
+                      RESERVAR
+                    </a>
+                    <a href={h.mapUrl} target="_blank" rel="noopener noreferrer" className="btn-map btn-olive">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
+                        <circle cx="12" cy="9" r="2.5" />
+                      </svg>
+                      C&Oacute;MO LLEGAR
+                    </a>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
-        </Stagger>
-      ))}
+
+          <div className="hosp-dots">
+            {hoteles.map((h, n) => (
+              <button
+                key={h.name}
+                className={n === i ? "active" : ""}
+                onClick={() => { setTocado(true); setI(n); }}
+                aria-label={h.name}
+                type="button"
+              />
+            ))}
+          </div>
+        </div>
+      </Stagger>
     </AnimatedCard>
   );
 }

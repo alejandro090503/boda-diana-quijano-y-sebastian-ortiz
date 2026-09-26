@@ -230,14 +230,20 @@ body::after {
 /* Mini envelope card */
 .card-mini-envelope {
   overflow: visible;
-  padding-top: 4.25rem;
+  /* El contenido de AnimatedCard va dentro de un wrapper position:relative, asi
+     que la solapa se posiciona respecto a EL, no respecto a la tarjeta: con
+     top:0 aparecia 76px por debajo del borde y no se leia como solapa. Estos
+     dos valores la devuelven al borde real. */
+  --flap-top: 4.25rem;
+  --flap-inset-x: 2rem;
+  padding-top: var(--flap-top);
 }
 .card-mini-envelope .mini-flap {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 72px;
+  top: calc(-1 * var(--flap-top));
+  left: calc(-1 * var(--flap-inset-x));
+  right: calc(-1 * var(--flap-inset-x));
+  height: 104px;
   background-color: #EAEFF4;
   background-image: url("/paper-fiber.jpg");
   background-blend-mode: luminosity;
@@ -621,6 +627,107 @@ body::after {
   border: 1px solid var(--green-line);
   border-radius: 12px;
   background: rgba(255, 253, 249, 0.55);
+}
+
+/* ── Hospedaje: carrusel lateral con foto del lugar ── */
+.hosp-carousel { position: relative; max-width: 340px; margin: 1.25rem auto 0; }
+.hosp-viewport { overflow: hidden; }
+.hosp-track { display: flex; transition: transform .45s cubic-bezier(.4,0,.2,1); }
+.hosp-slide {
+  flex: 0 0 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0.5rem 2.25rem;
+}
+.hosp-photo {
+  width: 186px;
+  height: 186px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid rgba(111,143,175,0.45);
+  box-shadow: 0 12px 30px rgba(22,32,46,0.20);
+  margin-bottom: 1.15rem;
+  background: var(--bg-cream);
+}
+.hosp-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.hosp-arrow {
+  position: absolute;
+  top: 101px;
+  transform: translateY(-50%);
+  width: 38px; height: 38px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(255,253,249,0.9);
+  border: 1px solid var(--gold-antique);
+  border-radius: 50%;
+  color: var(--olive-primary);
+  z-index: 2; padding: 0; cursor: pointer;
+  box-shadow: 0 2px 8px rgba(22,32,46,0.18);
+}
+.hosp-arrow svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; }
+.hosp-arrow.prev { left: -6px; }
+.hosp-arrow.next { right: -6px; }
+.hosp-dots { display: flex; justify-content: center; gap: 8px; margin-top: 1.1rem; }
+.hosp-dots button {
+  width: 8px; height: 8px; border-radius: 50%; border: none; padding: 0;
+  background: var(--olive-soft); opacity: .38; cursor: pointer;
+  transition: opacity .25s, transform .25s, width .25s;
+}
+.hosp-dots button.active { opacity: .95; width: 20px; border-radius: 4px; background: var(--olive-primary); }
+
+/* ── Lluvia de sobres: sobre que se abre + sobres cayendo ── */
+.env-rain { position: absolute; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+.env-rain-item { position: absolute; top: -46px; will-change: transform; opacity: 0; }
+.env-stage { position: relative; z-index: 1; }
+.env-interactive {
+  display: flex; flex-direction: column; align-items: center;
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+  outline: none; border: none; background: none; padding: 0;
+  margin: 1.25rem auto 0; opacity: 0;
+}
+.env-body {
+  perspective: 700px; position: relative;
+  width: min(250px, 66vw); aspect-ratio: 260/200;
+  filter: drop-shadow(0 10px 24px rgba(22,32,46,.20));
+}
+.env-body svg.env-svg { width: 100%; height: 100%; display: block; }
+.env-flap-wrap {
+  position: absolute; top: 23%; left: 6.9%; width: 86.2%; height: 43%;
+  transform-origin: top center; transform-style: preserve-3d;
+  backface-visibility: hidden; -webkit-backface-visibility: hidden;
+  transition: transform .65s cubic-bezier(.4,0,.2,1);
+  pointer-events: none; z-index: 2;
+}
+.env-interactive.open .env-flap-wrap { transform: rotateX(-175deg); }
+.env-seal {
+  position: absolute; top: 52%; left: 50%; width: 23%; aspect-ratio: 1;
+  transform: translate(-50%,-50%); z-index: 3;
+  transition: opacity .35s ease, transform .5s cubic-bezier(.4,0,.2,1);
+  pointer-events: none;
+}
+.env-interactive.open .env-seal { opacity: 0; transform: translate(-50%,-50%) scale(.7); }
+.env-open-content {
+  overflow: hidden; max-height: 0; opacity: 0;
+  transition: max-height .55s .3s ease, opacity .4s .38s ease;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  padding: 0 4px; text-align: center; pointer-events: none;
+}
+.env-interactive.open .env-open-content {
+  max-height: 900px; opacity: 1; pointer-events: auto; margin-top: 1.1rem;
+}
+.env-tap-hint {
+  margin-top: .85rem; opacity: 0;
+  transition: opacity .5s ease;
+  font-family: var(--font-sans), sans-serif;
+  text-transform: uppercase; letter-spacing: .26em;
+  font-size: .72rem; font-weight: 600; color: var(--olive-soft);
+}
+.env-tap-hint.show { opacity: 1; }
+.env-interactive.open + .env-tap-hint { opacity: 0; }
+@media (prefers-reduced-motion: reduce) {
+  .env-rain { display: none; }
 }
 
 /* ── Muro de mensajes ── */

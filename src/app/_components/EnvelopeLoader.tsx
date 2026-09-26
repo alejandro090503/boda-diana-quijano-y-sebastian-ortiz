@@ -52,7 +52,7 @@ export default function EnvelopeLoader({ onOpen, onTap }: Props) {
     const onTime = () => {
       const dur = v.duration;
       if (!isFinite(dur) || dur <= 0) return;
-      if (v.currentTime >= dur - 0.35) triggerReveal();
+      if (v.currentTime >= dur - 0.22) triggerReveal();
     };
     const onEnded = () => triggerReveal();
     v.addEventListener("timeupdate", onTime);
@@ -68,14 +68,14 @@ export default function EnvelopeLoader({ onOpen, onTap }: Props) {
       {phase !== "done" && (
         <motion.div
           className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden cursor-pointer"
-          style={{ backgroundColor: "#EFEAE0" }}
+          style={{ backgroundColor: "#DCE9F2" }}
           onClick={handleTap}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.6 }}
         >
           {/* Imagen estática del sobre */}
           <motion.img
-            src="/envelope.jpg?v=1"
+            src="/envelope.jpg?v=2"
             alt="Sobre de la invitación"
             className="absolute inset-0 w-full h-full"
             style={{ objectFit: "cover", objectPosition: "center" }}
@@ -96,7 +96,7 @@ export default function EnvelopeLoader({ onOpen, onTap }: Props) {
             animate={{ opacity: phase === "opening" ? 1 : 0 }}
             transition={{ duration: 0 }}
           >
-            <source src="/envelope.mp4?v=1" type="video/mp4" />
+            <source src="/envelope.mp4?v=2" type="video/mp4" />
           </motion.video>
 
           {/* Hint "Toca para abrir" */}
