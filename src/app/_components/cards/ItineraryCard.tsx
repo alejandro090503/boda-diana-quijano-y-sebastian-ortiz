@@ -5,49 +5,14 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import AnimatedCard, { Stagger } from "../AnimatedCard";
 import { OliveBranch } from "../Ornaments";
+import { useLang } from "../../_data/idioma";
 
-type Evt = { time: string; label: string; desc: string; icon: string };
 
-// Itinerario tal cual lo entregó el cliente.
-const events: Evt[] = [
-  {
-    time: "11:00 a.m.",
-    label: "Ceremonia Religiosa",
-    desc: "Parroquia de San Francisco de Asís, Umán.",
-    icon: "/iconos/iglesia.png",
-  },
-  {
-    time: "1:30 p.m.",
-    label: "Cóctel de bienvenida",
-    desc: "En la Quinta Montes Molina.",
-    icon: "/iconos/arco.png",
-  },
-  {
-    time: "2:00 p.m.",
-    label: "La celebración",
-    desc: "Da inicio la fiesta que hemos soñado compartir con ustedes.",
-    icon: "/iconos/novios.png",
-  },
-  {
-    time: "3:00 p.m.",
-    label: "Comida",
-    desc: "Compartimos la mesa en honor de nuestro nuevo capítulo.",
-    icon: "/iconos/cena.png",
-  },
-  {
-    time: "4:00 p.m.",
-    label: "Abrimos la pista",
-    desc: "Que nadie se quede sentado.",
-    icon: "/iconos/fiesta.png",
-  },
-  {
-    time: "9:30 p.m.",
-    label: "Hasta pronto",
-    desc: "Cerramos la noche con una última copa y muchos recuerdos.",
-    icon: "/iconos/anillos.png",
-  },
-];
+const ICONOS = ["/iconos/iglesia.png","/iconos/arco.png","/iconos/novios.png","/iconos/cena.png","/iconos/fiesta.png","/iconos/anillos.png"];
+
 export default function ItineraryCard() {
+  const { t } = useLang();
+  const events = t.itinerario.map((e, i) => ({ ...e, icon: ICONOS[i] }));
   const pista = useRef<HTMLDivElement>(null);
   const [avance, setAvance] = useState(0);
 
@@ -99,7 +64,7 @@ export default function ItineraryCard() {
       </Stagger>
       <Stagger>
         <p className="font-script text-center" style={{ color: "var(--olive-primary)", fontSize: "3.4rem", lineHeight: 1.05 }}>
-          Así celebraremos
+          {t.itinerarioTitulo}
         </p>
       </Stagger>
 

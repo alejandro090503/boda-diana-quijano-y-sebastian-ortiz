@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useState } from "react";
 import AnimatedCard, { Stagger } from "../AnimatedCard";
+import { useLang } from "../../_data/idioma";
+
 
 /**
  * Carrusel lateral con foto del lugar, al estilo del hospedaje de
@@ -11,21 +13,18 @@ import AnimatedCard, { Stagger } from "../AnimatedCard";
 const hoteles = [
   {
     name: "NH Collection Mérida",
-    zona: "Paseo Montejo · Calle 60 346",
     foto: "/hoteles/nh-1-sq.jpg",
     mapUrl: "https://maps.app.goo.gl/Y3ByGxws2EZy8ui68",
     webUrl: "https://www.nh-hotels.com/es/hotel/nh-collection-merida-paseo-montejo",
   },
   {
     name: "City Express Plus",
-    zona: "By Marriott · Calle 60 346",
     foto: "/hoteles/ce-1-sq.jpg",
     mapUrl: "https://maps.app.goo.gl/LwM1bf6svGFJzbW37",
     webUrl: "https://www.marriott.com/es/hotels/midcy-city-express-plus-by-marriott-merida/overview/",
   },
   {
     name: "Holiday Inn Mérida",
-    zona: "Av. Colón 498 · Centro",
     foto: "/hoteles/hi-3-sq.jpg",
     mapUrl: "https://maps.app.goo.gl/LjfbBMsxLEXASiua7",
     webUrl: "https://www.ihg.com/holidayinn/hotels/us/es/merida/midmx/hoteldetail",
@@ -33,6 +32,7 @@ const hoteles = [
 ];
 
 export default function HotelsCard() {
+  const { t } = useLang();
   const [i, setI] = useState(0);
   const [tocado, setTocado] = useState(false);
 
@@ -55,7 +55,7 @@ export default function HotelsCard() {
     <AnimatedCard className="tex-emboss text-center py-9" anim="blurRise">
       <Stagger>
         <p className="font-script mb-1" style={{ color: "var(--olive-primary)", fontSize: "3rem", lineHeight: 1 }}>
-          Hospedaje
+          {t.hospedaje}
         </p>
       </Stagger>
 
@@ -72,17 +72,17 @@ export default function HotelsCard() {
 
       <Stagger>
         <p className="font-serif italic text-lg px-2" style={{ color: "var(--ink-dark)", lineHeight: 1.6 }}>
-          Si vienes de fuera, estas son nuestras
-          <br />recomendaciones cerca de la recepci&oacute;n
+          {t.hospedajeSub1}
+          <br />{t.hospedajeSub2}
         </p>
       </Stagger>
 
       <Stagger>
         <div className="hosp-carousel">
-          <button className="hosp-arrow prev" onClick={() => ir(-1)} aria-label="Hotel anterior" type="button">
+          <button className="hosp-arrow prev" onClick={() => ir(-1)} aria-label={t.hotelAnterior} type="button">
             <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="15 18 9 12 15 6" /></svg>
           </button>
-          <button className="hosp-arrow next" onClick={() => ir(1)} aria-label="Hotel siguiente" type="button">
+          <button className="hosp-arrow next" onClick={() => ir(1)} aria-label={t.hotelSiguiente} type="button">
             <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="9 18 15 12 9 6" /></svg>
           </button>
 
@@ -97,7 +97,7 @@ export default function HotelsCard() {
             }}
           >
             <div className="hosp-track" style={{ transform: `translateX(-${i * 100}%)` }}>
-              {hoteles.map((h) => (
+              {hoteles.map((h, n) => (
                 <div className="hosp-slide" key={h.name}>
                   <div className="hosp-photo">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -107,7 +107,7 @@ export default function HotelsCard() {
                     {h.name}
                   </p>
                   <p className="font-serif" style={{ color: "var(--terracotta)", fontSize: "1.08rem", lineHeight: 1.5, margin: "0.15rem 0 0.9rem" }}>
-                    {h.zona}
+                    {t.zonas[n]}
                   </p>
                   <div className="flex flex-wrap justify-center gap-2">
                     <a href={h.webUrl} target="_blank" rel="noopener noreferrer" className="btn-map">
@@ -115,14 +115,14 @@ export default function HotelsCard() {
                         <rect x="3" y="7" width="18" height="14" rx="2" />
                         <path d="M7 7V5a5 5 0 0110 0v2" />
                       </svg>
-                      RESERVAR
+                      {t.reservar}
                     </a>
                     <a href={h.mapUrl} target="_blank" rel="noopener noreferrer" className="btn-map btn-olive">
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                         <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
                         <circle cx="12" cy="9" r="2.5" />
                       </svg>
-                      C&Oacute;MO LLEGAR
+                      {t.comoLlegar}
                     </a>
                   </div>
                 </div>

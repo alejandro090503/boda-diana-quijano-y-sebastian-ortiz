@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLang } from "../_data/idioma";
 
 interface Props {
   onOpen: () => void;
@@ -9,6 +10,7 @@ interface Props {
 }
 
 export default function EnvelopeLoader({ onOpen, onTap }: Props) {
+  const { t } = useLang();
   const [phase, setPhase] = useState<"sealed" | "opening" | "done">("sealed");
   const videoRef = useRef<HTMLVideoElement>(null);
   const flashedRef = useRef(false);
@@ -126,7 +128,7 @@ export default function EnvelopeLoader({ onOpen, onTap }: Props) {
                   animate={{ scale: [1, 1.05, 1], opacity: [0.9, 1, 0.9] }}
                   transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
                 >
-                  TOCA PARA ABRIR
+                  {t.sobreHint}
                 </motion.div>
               </motion.div>
             )}

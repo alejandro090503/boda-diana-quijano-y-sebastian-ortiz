@@ -2,20 +2,21 @@
 
 import AnimatedCard, { Stagger } from "../AnimatedCard";
 import { OliveBranch } from "../Ornaments";
+import { useLang } from "../../_data/idioma";
+
 
 // Los dos grupos de padrinos, tal como los entrego el cliente.
-const grupos = [
-  {
-    titulo: "Velación",
-    parejas: [{ el: "José Baltazar Cauich Uc", ella: "María Fany Brito Quijano" }],
-  },
-  {
-    titulo: "Anillos",
-    parejas: [{ el: "Alejandro Castro Zacarías", ella: "Aída Edith Arévalo Domínguez" }],
-  },
+const PAREJAS = [
+  [{ el: "José Baltazar Cauich Uc", ella: "María Fany Brito Quijano" }],
+  [{ el: "Alejandro Castro Zacarías", ella: "Aída Edith Arévalo Domínguez" }],
 ];
 
 export default function PadrinosCard() {
+  const { t } = useLang();
+  const grupos = [
+    { titulo: t.velacion, parejas: PAREJAS[0] },
+    { titulo: t.anillos, parejas: PAREJAS[1] },
+  ];
   return (
     <AnimatedCard className="tex-beige text-center py-8" anim="slideLeft">
       <Stagger>
@@ -23,7 +24,7 @@ export default function PadrinosCard() {
           className="font-sans-label"
           style={{ color: "var(--olive-soft)", fontSize: "0.8rem", fontWeight: 600, marginBottom: "0.4rem" }}
         >
-          NUESTROS PADRINOS
+          {t.padrinosEyebrow}
         </p>
       </Stagger>
 

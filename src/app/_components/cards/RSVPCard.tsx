@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import AnimatedCard, { Stagger } from "../AnimatedCard";
+import { useLang } from "../../_data/idioma";
 
 const PANEL_API = "https://panel-invitados.vercel.app/api/confirmar";
 const RSVP_URL = "https://boda-sebastian-y-diana.vercel.app";
@@ -34,6 +35,7 @@ const clave = (x: string) =>
   x.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
 
 export default function RSVPCard() {
+  const { t } = useLang();
   const searchParams = useSearchParams();
   const token = searchParams.get("i") || "";
   const urlPara = (token ? decodeInvite(token) : searchParams.get("para") || "").trim();
@@ -50,7 +52,7 @@ export default function RSVPCard() {
   const [resumen, setResumen] = useState<{ estado: "yes" | "no"; nombres: string[] } | null>(null);
   const [feedback, setFeedback] = useState("");
   const [feedbackKind, setFeedbackKind] = useState<"info" | "success" | "warn" | "error">("info");
-  const [btnLabel, setBtnLabel] = useState(frozen ? "Fecha límite alcanzada" : "Confirmar asistencia");
+  const [btnLabel, setBtnLabel] = useState<string>(frozen ? t.rsvpVencido : t.rsvpEnviar);
 
   useEffect(() => {
     if (!urlPara) return;
@@ -77,7 +79,7 @@ export default function RSVPCard() {
             previas[i] = d.estado === "declino" ? "no" : conf.includes(clave(nm)) ? "yes" : "no";
           });
           setChoices(previas);
-          setBtnLabel("Actualizar respuesta");
+          setBtnLabel(t.rsvpActualizar);
           const asisten = lista.filter((_, i) => previas[i] === "yes");
           // Con respuesta ya guardada, la sección arranca CERRADA.
           setResumen({ estado: asisten.length ? "yes" : "no", nombres: asisten });
@@ -86,7 +88,7 @@ export default function RSVPCard() {
       })
       .catch(() => {
         setFeedbackKind("error");
-        setFeedback("No pudimos cargar tu invitación. Recarga la página e inténtalo de nuevo.");
+        setFeedback(t.errCarga);
       })
       .finally(() => setGateLoading(false));
   }, [urlPara]);
@@ -117,7 +119,7 @@ export default function RSVPCard() {
     const estado = asisten.length > 0 ? "confirmado" : "declino";
 
     setEnviando(true);
-    setBtnLabel("Enviando…");
+    setBtnLabel(t.rsvpEnviando);
     setFeedback("");
     try {
       const res = await fetch(PANEL_API, {
@@ -137,15 +139,15 @@ export default function RSVPCard() {
       if (res.status === 423) {
         setBloqueada(true);
         setFeedbackKind("warn");
-        setFeedback("Las confirmaciones ya están cerradas. Por favor avísanos directamente.");
-        setBtnLabel("Confirmaciones cerradas");
+        setFeedback(t.errCerradas);
+        setBtnLabel(t.rsvpCerradas);
         return;
       }
       if (res.status === 410) {
         setBloqueada(true);
         setFeedbackKind("warn");
-        setFeedback("Este enlace ya no está activo. Por favor pide a los novios uno nuevo.");
-        setBtnLabel("Enlace no disponible");
+        setFeedback(t.errLink);
+        setBtnLabel(t.rsvpNoDisponible);
         return;
       }
       // Solo se da por registrada si el panel la guardó de verdad.
@@ -153,21 +155,21 @@ export default function RSVPCard() {
         setFeedbackKind("error");
         setFeedback(
           data?.error === "no_match"
-            ? "No pudimos identificar tu invitación. Abre el enlace personalizado que te enviaron por WhatsApp."
-            : "Hubo un problema al enviar. Inténtalo de nuevo."
+            ? t.errIdent
+            : t.errEnvio
         );
-        setBtnLabel("Reintentar");
+        setBtnLabel(t.rsvpReintentar);
         return;
       }
 
-      setBtnLabel("Actualizar respuesta");
+      setBtnLabel(t.rsvpActualizar);
       setResumen({ estado: asisten.length ? "yes" : "no", nombres: asisten });
       setCerrada(true);
       setFeedback("");
     } catch {
       setFeedbackKind("error");
-      setFeedback("Sin conexión. Revisa tu internet e inténtalo de nuevo.");
-      setBtnLabel("Reintentar");
+      setFeedback(t.errRed);
+      setBtnLabel(t.rsvpReintentar);
     } finally {
       setEnviando(false);
     }
@@ -191,16 +193,16 @@ export default function RSVPCard() {
     if (!resumen) return { titulo: "", sub: "" };
     if (resumen.estado === "no") {
       return {
-        titulo: "Gracias por avisarnos",
-        sub: "Lamentamos que no puedan acompañarnos. Los vamos a extrañar.",
+        titulo: t.rsvpGraciasNo,
+        sub: t.rsvpGraciasNoSub,
       };
     }
     if (resumen.nombres.length === 1) {
-      return { titulo: "¡Gracias por confirmar!", sub: `Te esperamos, ${resumen.nombres[0]}.` };
+      return { titulo: t.rsvpGraciasSi, sub: t.rsvpEsperamos(resumen.nombres[0]) };
     }
     return {
-      titulo: "¡Gracias por confirmar!",
-      sub: `Confirmamos ${resumen.nombres.length} lugares: ${resumen.nombres.join(", ")}.`,
+      titulo: t.rsvpGraciasSi,
+      sub: t.rsvpConfirmados(resumen.nombres.length, resumen.nombres.join(", ")),
     };
   })();
 
@@ -216,13 +218,13 @@ export default function RSVPCard() {
 
       <Stagger>
         <p className="font-script" style={{ color: "var(--olive-primary)", fontSize: "3rem", lineHeight: 1 }}>
-          Confirmación
+          {t.rsvpTitulo}
         </p>
       </Stagger>
 
       <Stagger>
         <p className="font-serif italic mb-2 mt-1" style={{ color: "var(--ink-dark)", fontSize: "1.2rem" }}>
-          Nos encantaría celebrar contigo
+          {t.rsvpSub}
         </p>
       </Stagger>
 
@@ -248,12 +250,12 @@ export default function RSVPCard() {
             style={{ backgroundColor: "rgba(31,28,25,0.06)", border: "1px solid var(--beige)", borderRadius: 14 }}
           >
             <p className="font-serif" style={{ color: "var(--ink-dark)", fontSize: "1.2rem", lineHeight: 1.5 }}>
-              Tienes{" "}
+              {t.rsvpTienes}{" "}
               <span className="font-semibold" style={{ color: "var(--olive-primary)" }}>
-                {asignados.length} {asignados.length === 1 ? "pase" : "pases"}
+                {asignados.length} {asignados.length === 1 ? t.rsvpPase : t.rsvpPases}
               </span>
               <br />
-              para{" "}
+              {t.rsvpPara}{" "}
               <span className="font-script" style={{ color: "var(--olive-primary)", fontSize: "1.8rem" }}>
                 {urlPara}
               </span>
@@ -268,9 +270,7 @@ export default function RSVPCard() {
             className="font-serif italic mx-auto max-w-[360px] mb-2"
             style={{ color: "var(--ink-dark)", fontSize: "1.05rem", lineHeight: 1.6 }}
           >
-            Para confirmar necesitas abrir el enlace personalizado que te enviaron por WhatsApp. Ese
-            enlace lleva los nombres de tu invitación; si lo abres desde un reenvío o escribiendo la
-            dirección a mano, no podemos identificarla.
+            {t.rsvpSinLink}
           </p>
         </Stagger>
       )}
@@ -281,7 +281,7 @@ export default function RSVPCard() {
             className="font-serif italic mx-auto max-w-[360px] mb-2"
             style={{ color: "var(--terracotta)", fontSize: "1.05rem", lineHeight: 1.6 }}
           >
-            No encontramos lugares asignados a esta invitación. Escríbenos para ayudarte.
+            {t.rsvpSinAsignados}
           </p>
         </Stagger>
       )}
@@ -353,7 +353,7 @@ export default function RSVPCard() {
                       borderRadius: 24,
                     }}
                   >
-                    Modificar mi respuesta
+                    {t.rsvpModificar}
                   </button>
                 )}
               </motion.div>
@@ -424,7 +424,7 @@ export default function RSVPCard() {
                                   borderRadius: 10,
                                 }}
                               >
-                                {isYes ? "Asistiré" : "No asistiré"}
+                                {isYes ? t.rsvpSi : t.rsvpNo}
                               </button>
                             );
                           })}
@@ -473,9 +473,9 @@ export default function RSVPCard() {
             <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm.5 5v5.25l4.5 2.67-.75 1.23L11 13V7h1.5z" />
           </svg>
           <span className="font-serif" style={{ color: "var(--ink-dark)", fontSize: "1.1rem", lineHeight: 1.5 }}>
-            Gracias por confirmar antes del
+            {t.rsvpLimite}
             <br />
-            <span className="font-semibold">12 de octubre 2026</span>
+            <span className="font-semibold">{t.limite}</span>
           </span>
         </div>
       </Stagger>

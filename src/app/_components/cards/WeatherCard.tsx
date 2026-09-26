@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import AnimatedCard, { Stagger } from "../AnimatedCard";
 import { OliveBranch } from "../Ornaments";
 import { FECHA_BODA } from "../../_data/fecha";
+import { useLang } from "../../_data/idioma";
+
 
 /* Merida, Yucatan */
 const LAT = 20.9674;
@@ -20,15 +22,16 @@ type Pronostico = {
 };
 
 /* Códigos WMO agrupados en las tres familias que nos interesan */
-function describeCodigo(code: number): { texto: string; tipo: "sol" | "nube" | "lluvia" } {
-  if (code === 0) return { texto: "Despejado", tipo: "sol" };
-  if (code <= 2) return { texto: "Mayormente despejado", tipo: "sol" };
-  if (code === 3) return { texto: "Nublado", tipo: "nube" };
-  if (code <= 48) return { texto: "Neblina", tipo: "nube" };
-  if (code <= 67) return { texto: "Lluvia", tipo: "lluvia" };
-  if (code <= 77) return { texto: "Chubascos", tipo: "lluvia" };
-  if (code <= 82) return { texto: "Chubascos", tipo: "lluvia" };
-  return { texto: "Tormenta", tipo: "lluvia" };
+type Cielo = { despejado: string; casiDespejado: string; nublado: string; neblina: string; lluvia: string; chubascos: string; tormenta: string };
+
+function describeCodigo(code: number, c: Cielo): { texto: string; tipo: "sol" | "nube" | "lluvia" } {
+  if (code === 0) return { texto: c.despejado, tipo: "sol" };
+  if (code <= 2) return { texto: c.casiDespejado, tipo: "sol" };
+  if (code === 3) return { texto: c.nublado, tipo: "nube" };
+  if (code <= 48) return { texto: c.neblina, tipo: "nube" };
+  if (code <= 67) return { texto: c.lluvia, tipo: "lluvia" };
+  if (code <= 82) return { texto: c.chubascos, tipo: "lluvia" };
+  return { texto: c.tormenta, tipo: "lluvia" };
 }
 
 function IconoClima({ tipo }: { tipo: "sol" | "nube" | "lluvia" }) {
@@ -66,6 +69,7 @@ function IconoClima({ tipo }: { tipo: "sol" | "nube" | "lluvia" }) {
 }
 
 export default function WeatherCard() {
+  const { t } = useLang();
   const [pron, setPron] = useState<Pronostico | null>(null);
 
   useEffect(() => {
@@ -99,7 +103,7 @@ export default function WeatherCard() {
       .catch(() => {});
   }, []);
 
-  const desc = pron ? describeCodigo(pron.code) : null;
+  const desc = pron ? describeCodigo(pron.code, t.cielo) : null;
 
   return (
     <AnimatedCard className="tex-count text-center py-8" anim="blurRise">
@@ -108,13 +112,13 @@ export default function WeatherCard() {
           className="font-sans-label"
           style={{ color: "var(--olive-soft)", fontSize: "0.8rem", fontWeight: 600, marginBottom: "0.4rem" }}
         >
-          MÉRIDA, YUCATÁN
+          {t.climaLugar}
         </p>
       </Stagger>
 
       <Stagger>
         <p className="font-script" style={{ color: "var(--olive-primary)", fontSize: "3rem", lineHeight: 1 }}>
-          El clima
+          {t.climaTitulo}
         </p>
       </Stagger>
 
@@ -144,7 +148,7 @@ export default function WeatherCard() {
                   {pron.max}°
                 </span>
                 <span className="font-sans-label" style={{ color: "var(--ink-dark)", fontSize: "0.78rem", fontWeight: 600 }}>
-                  MÁXIMA
+                  {t.climaMax}
                 </span>
               </span>
               <span className="weather-chip">
@@ -152,7 +156,7 @@ export default function WeatherCard() {
                   {pron.min}°
                 </span>
                 <span className="font-sans-label" style={{ color: "var(--ink-dark)", fontSize: "0.78rem", fontWeight: 600 }}>
-                  MÍNIMA
+                  {t.climaMin}
                 </span>
               </span>
               <span className="weather-chip">
@@ -160,7 +164,7 @@ export default function WeatherCard() {
                   {pron.lluvia}%
                 </span>
                 <span className="font-sans-label" style={{ color: "var(--ink-dark)", fontSize: "0.78rem", fontWeight: 600 }}>
-                  LLUVIA
+                  {t.climaLluvia}
                 </span>
               </span>
             </div>
@@ -176,7 +180,7 @@ export default function WeatherCard() {
           </Stagger>
           <Stagger>
             <p className="font-serif font-semibold" style={{ color: "var(--ink-dark)", fontSize: "1.3rem" }}>
-              Mañana templada, tarde cálida
+              {t.climaTipico}
             </p>
           </Stagger>
           <Stagger>
@@ -186,7 +190,7 @@ export default function WeatherCard() {
                   29–32°
                 </span>
                 <span className="font-sans-label" style={{ color: "var(--ink-dark)", fontSize: "0.78rem", fontWeight: 600 }}>
-                  DE DÍA
+                  {t.climaDia}
                 </span>
               </span>
               <span className="weather-chip">
@@ -194,7 +198,7 @@ export default function WeatherCard() {
                   18–20°
                 </span>
                 <span className="font-sans-label" style={{ color: "var(--ink-dark)", fontSize: "0.78rem", fontWeight: 600 }}>
-                  DE NOCHE
+                  {t.climaNoche}
                 </span>
               </span>
             </div>
@@ -204,8 +208,7 @@ export default function WeatherCard() {
               className="font-serif italic mx-auto mt-5 px-3"
               style={{ color: "var(--ink-dark)", fontSize: "1.15rem", lineHeight: 1.6, maxWidth: "310px" }}
             >
-              Los días previos a la boda verás aquí el pronóstico exacto
-              para Mérida.
+              {t.climaEspera}
             </p>
           </Stagger>
         </>
@@ -217,9 +220,7 @@ export default function WeatherCard() {
             className="font-serif"
             style={{ color: "var(--ink-dark)", fontSize: "1.15rem", lineHeight: 1.6, fontWeight: 500 }}
           >
-            Diciembre en Mérida amanece templado y a media tarde el sol pega
-            fuerte. Por eso la vestimenta es guayabera de manga larga y lino:
-            se ve elegante y se siente fresco toda la celebración.
+            {t.climaNota}
           </p>
         </div>
       </Stagger>

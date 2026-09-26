@@ -4,6 +4,8 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import AnimatedCard, { Stagger } from "../AnimatedCard";
 import { OliveBranch } from "../Ornaments";
+import { useLang } from "../../_data/idioma";
+
 
 function HaciendaSVG() {
   const svgRef = useRef<SVGSVGElement>(null);
@@ -75,6 +77,7 @@ function HaciendaSVG() {
 }
 
 export default function ReceptionCard() {
+  const { t } = useLang();
   return (
     <AnimatedCard className="card-olive card-arch text-center" anim="zoom">
       <img
@@ -85,7 +88,7 @@ export default function ReceptionCard() {
       />
       <Stagger>
         <p className="font-script mb-1" style={{ color: "var(--olive-primary)", fontSize: "2.7rem", lineHeight: 1.1, marginTop: "1.5rem" }}>
-          Recepción
+          {t.recepcion}
         </p>
       </Stagger>
 
@@ -114,10 +117,10 @@ export default function ReceptionCard() {
       <Stagger>
         <div className="my-5 text-center">
           <p className="font-serif font-semibold" style={{ color: "var(--olive-primary)", fontSize: "3.2rem", lineHeight: 1.1 }}>
-            1:30 PM
+            {t.horaRecepcion}
           </p>
           <p className="font-serif italic text-lg" style={{ color: "var(--olive-primary)", opacity: 0.85 }}>
-            Paseo de Montejo 469 · Mérida
+            {t.dirRecepcion}
           </p>
         </div>
       </Stagger>
@@ -134,7 +137,7 @@ export default function ReceptionCard() {
               <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
               <circle cx="12" cy="9" r="2.5" />
             </svg>
-            IR A UBICACIÓN
+            {t.irUbicacion}
           </a>
         </div>
       </Stagger>

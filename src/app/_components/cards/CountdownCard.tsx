@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import AnimatedCard, { Stagger } from "../AnimatedCard";
 import { OliveBranch } from "../Ornaments";
 import { FECHA_BODA } from "../../_data/fecha";
+import { useLang } from "../../_data/idioma";
+
 
 /** La ceremonia es a las 11:00 de la manana. */
 const HORA_CEREMONIA = 11;
@@ -22,6 +24,7 @@ function calcular(fecha: Date): Resto {
 }
 
 export default function CountdownCard() {
+  const { t } = useLang();
   const [resto, setResto] = useState<Resto | null>(null);
 
   useEffect(() => {
@@ -34,9 +37,9 @@ export default function CountdownCard() {
   }, []);
 
   const casillas: { valor: number | null; etiqueta: string }[] = [
-    { valor: resto ? resto.dias : null, etiqueta: "Días" },
-    { valor: resto ? resto.horas : null, etiqueta: "Horas" },
-    { valor: resto ? resto.minutos : null, etiqueta: "Minutos" },
+    { valor: resto ? resto.dias : null, etiqueta: t.dias },
+    { valor: resto ? resto.horas : null, etiqueta: t.horas },
+    { valor: resto ? resto.minutos : null, etiqueta: t.minutos },
   ];
 
   return (
@@ -49,7 +52,7 @@ export default function CountdownCard() {
 
       <Stagger>
         <p className="font-script" style={{ color: "var(--olive-primary)", fontSize: "2.9rem", lineHeight: 1.1 }}>
-          Faltan
+          {t.faltan}
         </p>
       </Stagger>
 
@@ -98,7 +101,7 @@ export default function CountdownCard() {
 
       <Stagger>
         <p className="font-serif italic mt-4" style={{ color: "var(--ink-dark)", fontSize: "1.25rem" }}>
-          para el gran día
+          {t.granDia}
         </p>
       </Stagger>
     </AnimatedCard>

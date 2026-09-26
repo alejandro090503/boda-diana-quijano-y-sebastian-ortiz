@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import EnvelopeLoader from "./EnvelopeLoader";
+import LangGate from "./LangGate";
 import AudioPlayer, { type AudioAPI } from "./AudioPlayer";
 import Petals from "./Petals";
 import CoverCard from "./cards/CoverCard";
@@ -22,15 +23,67 @@ import GiftsCard from "./cards/GiftsCard";
 import GiftBoxCard from "./cards/GiftBoxCard";
 import AlbumCard from "./cards/AlbumCard";
 import RSVPCard from "./cards/RSVPCard";
-import { FECHA_PUNTEADA } from "../_data/fecha";
+import { FECHA_BODA, DIA, ANIO } from "../_data/fecha";
+import { LangProvider, T, useLangGuardado, type Lang } from "../_data/idioma";
+
+function Pie({ lang }: { lang: Lang }) {
+  const t = T[lang];
+  const mes = FECHA_BODA ? t.mes(FECHA_BODA.getMonth(), "DICIEMBRE") : "";
+  return (
+    <footer className="text-center mt-4 mb-8">
+      <div className="divider" />
+      <p className="font-script mt-4 foil" style={{ fontSize: "2.2rem" }}>
+        Sebasti&aacute;n &amp; Diana
+      </p>
+      <p className="font-sans-label mt-2" style={{ color: "var(--ink-dark)", fontSize: "0.8rem", fontWeight: 600 }}>
+        {DIA} &middot; {mes} &middot; {ANIO}
+      </p>
+      <p className="font-sans-label mt-4" style={{ color: "var(--ink-dark)", fontSize: "0.66rem", fontWeight: 500 }}>
+        {t.pieCredito}{" "}
+        <a
+          href="https://instagram.com/elysium.invitaciones"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="credito-link"
+          style={{ color: "var(--olive-soft)", textDecoration: "none" }}
+        >
+          @ELYSIUM
+        </a>
+      </p>
+    </footer>
+  );
+}
 
 export default function InvitationClient() {
   const [phase, setPhase] = useState<"envelope" | "cards">("envelope");
   const audio = useRef<AudioAPI>(null);
+  const { lang, setLang, listo } = useLangGuardado();
+
+  // hasta leer localStorage no se pinta nada: evita el parpadeo de la portada
+  if (!listo) return null;
+
+  if (!lang) {
+    return (
+      <AnimatePresence>
+        <LangGate key="gate" onPick={setLang} />
+      </AnimatePresence>
+    );
+  }
 
   return (
-    <>
+    <LangProvider lang={lang} setLang={setLang}>
       <AudioPlayer ref={audio} />
+
+      {phase === "cards" && (
+        <div className="lang-switch" role="group" aria-label="Idioma / Language">
+          <button type="button" onClick={() => setLang("es")} aria-pressed={lang === "es"} lang="es">
+            ES
+          </button>
+          <button type="button" onClick={() => setLang("en")} aria-pressed={lang === "en"} lang="en">
+            EN
+          </button>
+        </div>
+      )}
 
       <AnimatePresence>
         {phase === "envelope" && (
@@ -66,30 +119,9 @@ export default function InvitationClient() {
           <GiftBoxCard />
           <AlbumCard />
           <RSVPCard />
-
-          <footer className="text-center mt-4 mb-8">
-            <div className="divider" />
-            <p className="font-script mt-4 foil" style={{ fontSize: "2.2rem" }}>
-              Sebastián &amp; Diana
-            </p>
-            <p className="font-sans-label mt-2" style={{ color: "var(--ink-dark)", fontSize: "0.8rem", fontWeight: 600 }}>
-              {FECHA_PUNTEADA}
-            </p>
-            <p className="font-sans-label mt-4" style={{ color: "var(--ink-dark)", fontSize: "0.66rem", fontWeight: 500 }}>
-              DISEÑADO POR{" "}
-              <a
-                href="https://instagram.com/elysium.invitaciones"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="credito-link"
-                style={{ color: "var(--olive-soft)", textDecoration: "none" }}
-              >
-                @ELYSIUM
-              </a>
-            </p>
-          </footer>
+          <Pie lang={lang} />
         </main>
       )}
-    </>
+    </LangProvider>
   );
 }

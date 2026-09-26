@@ -2,7 +2,9 @@
 
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { DIA, MES, ANIO } from "../../_data/fecha";
+import { DIA, MES, ANIO, FECHA_BODA } from "../../_data/fecha";
+import { useLang } from "../../_data/idioma";
+
 
 /**
  * Portada a pantalla completa con la foto que eligio el cliente, al estilo de
@@ -21,6 +23,8 @@ const MASCARA =
   "linear-gradient(to bottom, #000 0%, #000 56%, rgba(0,0,0,.86) 72%, rgba(0,0,0,.45) 87%, rgba(0,0,0,0) 100%)";
 
 export default function CoverCard() {
+  const { t } = useLang();
+  const mes = FECHA_BODA ? t.mes(FECHA_BODA.getMonth(), MES) : MES;
   const seccion = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
     target: seccion,
@@ -45,7 +49,7 @@ export default function CoverCard() {
         style={{
           backgroundImage: "url('/portada.jpg')",
           backgroundSize: "cover",
-          backgroundPosition: "center 42%",
+          backgroundPosition: "center 30%",
           maskImage: MASCARA,
           WebkitMaskImage: MASCARA,
           opacity: fotoOpacidad,
@@ -72,7 +76,7 @@ export default function CoverCard() {
       />
 
       <motion.div
-        className="absolute inset-x-0 bottom-0 px-7 pb-[11vh] text-center"
+        className="absolute inset-x-0 bottom-0 px-7 pb-[4.5vh] text-center"
         style={{ opacity: textoOpacidad, y: textoY }}>
         <motion.p
           className="font-sans-label"
@@ -81,16 +85,16 @@ export default function CoverCard() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.35, duration: 0.9, ease: "easeOut" }}
         >
-          NUESTRA BODA
+          {t.portadaEyebrow}
         </motion.p>
 
         <motion.h1
           className="font-script"
           style={{
             color: "#FFFFFF",
-            fontSize: "clamp(3.4rem, 17vw, 4.6rem)",
+            fontSize: "clamp(2.9rem, 14.5vw, 4rem)",
             lineHeight: 1.02,
-            margin: "0.5rem 0 0",
+            margin: "0.35rem 0 0",
             textShadow: "0 3px 26px rgba(12,28,52,0.55)",
           }}
           initial={{ opacity: 0, y: 26 }}
@@ -102,7 +106,7 @@ export default function CoverCard() {
 
         <motion.p
           className="font-script foil"
-          style={{ fontSize: "2.3rem", lineHeight: 1, margin: "0.1rem 0" }}
+          style={{ fontSize: "1.9rem", lineHeight: 1, margin: "0 0 0.1rem" }}
           initial={{ opacity: 0, scale: 0.85 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.8, duration: 0.8, ease: "easeOut" }}
@@ -114,9 +118,9 @@ export default function CoverCard() {
           className="font-script"
           style={{
             color: "#FFFFFF",
-            fontSize: "clamp(3.4rem, 17vw, 4.6rem)",
+            fontSize: "clamp(2.9rem, 14.5vw, 4rem)",
             lineHeight: 1.02,
-            marginBottom: "1.35rem",
+            marginBottom: "1rem",
             textShadow: "0 3px 26px rgba(12,28,52,0.55)",
           }}
           initial={{ opacity: 0, y: 26 }}
@@ -143,7 +147,7 @@ export default function CoverCard() {
             className="font-sans-label"
             style={{ color: "#F7E7CE", fontSize: "0.72rem", fontWeight: 600, letterSpacing: "0.26em" }}
           >
-            {DIA} &middot; {MES} &middot; {ANIO}
+            {DIA} &middot; {mes} &middot; {ANIO}
           </span>
         </motion.div>
 
@@ -154,7 +158,7 @@ export default function CoverCard() {
           animate={{ opacity: 1 }}
           transition={{ delay: 1.15, duration: 0.9 }}
         >
-          M&eacute;rida, Yucat&aacute;n
+          {t.ciudad}
         </motion.p>
       </motion.div>
     </section>

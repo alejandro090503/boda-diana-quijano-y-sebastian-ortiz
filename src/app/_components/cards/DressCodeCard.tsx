@@ -2,19 +2,17 @@
 
 import AnimatedCard, { Stagger } from "../AnimatedCard";
 import { Flourish } from "../Ornaments";
+import { useLang } from "../../_data/idioma";
+
 
 // Colores reservados: son los hex que el cliente marco como "a evitar"
 // (marfil, blanco, durazno claro, champan y los azules cielo de la boda),
 // agrupados en tres muestras para que se lean de un vistazo.
-const reservados = [
-  { hex: "#FFFFFF", nombre: "Blanco" },
-  { hex: "#FFFFF0", nombre: "Ivory" },
-  { hex: "#E8CFB8", nombre: "Nude" },
-  { hex: "#F7E7CE", nombre: "Champán" },
-  { hex: "#89CFF0", nombre: "Azul cielo" },
-];
+const HEX = ["#FFFFFF", "#FFFFF0", "#E8CFB8", "#F7E7CE", "#89CFF0"];
 
 export default function DressCodeCard() {
+  const { t } = useLang();
+  const reservados = HEX.map((hex, i) => ({ hex, nombre: t.colores[i] }));
   return (
     <AnimatedCard className="tex-beige text-center py-8" anim="flip" corners={false}>
       <img
@@ -32,7 +30,7 @@ export default function DressCodeCard() {
 
       <Stagger>
         <p className="font-script mb-1" style={{ color: "var(--olive-primary)", fontSize: "3rem", lineHeight: 1 }}>
-          Vestimenta
+          {t.vestimenta}
         </p>
       </Stagger>
 
@@ -41,9 +39,9 @@ export default function DressCodeCard() {
           className="font-serif font-bold"
           style={{ color: "var(--ink-dark)", fontSize: "2.6rem", letterSpacing: "0.1em", lineHeight: 1.15 }}
         >
-          FORMAL
+          {t.etiqueta1}
           <br />
-          YUCATECO
+          {t.etiqueta2}
         </p>
       </Stagger>
 
@@ -59,16 +57,15 @@ export default function DressCodeCard() {
             className="font-serif italic text-lg mt-3 px-3"
             style={{ color: "var(--ink-dark)", lineHeight: 1.6 }}
           >
-            <strong>Caballeros:</strong> guayabera de manga larga o ropa de lino.
+            <strong>{t.caballeros}</strong>{t.caballerosTxt}
             <br />
-            <strong>Damas:</strong> vestido largo o tipo cóctel.
+            <strong>{t.damas}</strong>{t.damasTxt}
           </p>
           <p
             className="font-serif italic text-lg mt-4 px-3"
             style={{ color: "var(--ink-dark)", lineHeight: 1.6 }}
           >
-            Con cariño, les pedimos <strong>no usar</strong> estos colores:
-            están reservados para la novia y el cortejo.
+            {t.coloresAviso1}<strong>{t.coloresAviso2}</strong>{t.coloresAviso3}
           </p>
         </div>
       </Stagger>

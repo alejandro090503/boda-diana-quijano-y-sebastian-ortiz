@@ -3,9 +3,13 @@
 import { motion } from "framer-motion";
 import { Stagger } from "../AnimatedCard";
 import { OliveBranch } from "../Ornaments";
-import { hayFecha, DIA, MES, ANIO } from "../../_data/fecha";
+import { hayFecha, DIA, MES, ANIO, FECHA_BODA } from "../../_data/fecha";
+import { useLang } from "../../_data/idioma";
+
 
 export default function HeroCard() {
+  const { t } = useLang();
+  const mes = FECHA_BODA ? t.mes(FECHA_BODA.getMonth(), MES) : MES;
   return (
     <motion.section
       className="relative w-[92vw] max-w-[400px] mx-auto mb-10"
@@ -59,12 +63,12 @@ export default function HeroCard() {
           >
             <Stagger>
               <p className="font-serif italic text-2xl" style={{ color: "var(--ink-dark)" }}>
-                Con todo nuestro amor
+                {t.heroAmor1}
               </p>
             </Stagger>
             <Stagger>
               <p className="font-serif italic text-2xl mb-4" style={{ color: "var(--ink-dark)" }}>
-                y el de nuestras familias
+                {t.heroAmor2}
               </p>
             </Stagger>
 
@@ -129,9 +133,9 @@ export default function HeroCard() {
 
             <Stagger>
               <p className="font-serif italic text-xl mt-2" style={{ color: "var(--ink-dark)" }}>
-                Tenemos el honor de invitarles a{" "}
+                {t.heroInvita}{" "}
                 <span className="font-bold" style={{ fontSize: "1.35em" }}>
-                  nuestra boda
+                  {t.heroBoda}
                 </span>
               </p>
             </Stagger>
@@ -141,7 +145,7 @@ export default function HeroCard() {
                 <div className="flex flex-nowrap items-center justify-center gap-2 mt-4 text-center">
                   <span className="font-serif font-semibold" style={{ color: "var(--ink-dark)", fontSize: "2.1rem" }}>{DIA}</span>
                   <span className="font-serif" style={{ color: "var(--rose-deco)", fontSize: "1.3rem" }}>·</span>
-                  <span className="font-serif font-semibold" style={{ color: "var(--ink-dark)", fontSize: "1.28rem", letterSpacing: "0.04em", whiteSpace: "nowrap" }}>{MES}</span>
+                  <span className="font-serif font-semibold" style={{ color: "var(--ink-dark)", fontSize: "1.28rem", letterSpacing: "0.04em", whiteSpace: "nowrap" }}>{mes}</span>
                   <span className="font-serif" style={{ color: "var(--rose-deco)", fontSize: "1.3rem" }}>·</span>
                   <span className="font-serif font-semibold" style={{ color: "var(--ink-dark)", fontSize: "2.1rem" }}>{ANIO}</span>
                 </div>
@@ -164,7 +168,7 @@ export default function HeroCard() {
 
             <Stagger>
               <p className="font-script mt-2" style={{ color: "var(--ink-dark)", fontSize: "1.5rem" }}>
-                Mérida, Yucatán, México
+                {t.ciudadLarga}
               </p>
             </Stagger>
 

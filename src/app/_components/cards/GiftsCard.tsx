@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import AnimatedCard, { Stagger } from "../AnimatedCard";
 import { OliveBranch } from "../Ornaments";
+import { useLang } from "../../_data/idioma";
+
 
 /**
  * Los novios NO tienen mesa de regalos: se mudan a Atlanta despues de la boda.
@@ -12,16 +14,14 @@ import { OliveBranch } from "../Ornaments";
  * boda-jeffersson-y-vanessa, montados sobre la tarjeta de papel de esta
  * invitacion en vez de sobre su seccion a pantalla completa.
  */
-const parrafos = [
-  "Queremos contarles una noticia muy especial: después de nuestro gran día iniciaremos una nueva aventura juntos y nos mudaremos a Atlanta. Por esta razón, y considerando nuestra próxima mudanza, hemos decidido no tener mesa de regalo.",
-  "Queremos que sepan que el mejor regalo para nosotros será compartir nuestra boda con las personas que queremos. Sin embargo, sabemos que algunos de ustedes querrán tener un detalle con nosotros, así que, si así lo desean, el día de la boda encontrarán sobres disponibles para quienes deseen hacernos un regalo en efectivo.",
-];
 
 const AZUL = "#6F8FAF";
 const PAPEL_A = "#FBF8F1";
 const PAPEL_B = "#F1EADC";
 
 export default function GiftsCard() {
+  const { t } = useLang();
+  const parrafos = t.lluvia;
   const [abierto, setAbierto] = useState(false);
   const [aterrizado, setAterrizado] = useState(false);
   const seccion = useRef<HTMLDivElement>(null);
@@ -134,13 +134,13 @@ export default function GiftsCard() {
               className="font-sans-label mb-2"
               style={{ color: "var(--olive-soft)", fontSize: "0.8rem", fontWeight: 600 }}
             >
-              CON CARI&Ntilde;O
+              {t.conCarino}
             </p>
           </Stagger>
 
           <Stagger>
             <p className="font-script" style={{ color: "var(--olive-primary)", fontSize: "2.9rem", lineHeight: 1.05 }}>
-              Lluvia de sobres
+              {t.lluviaTitulo}
             </p>
           </Stagger>
 
@@ -155,7 +155,7 @@ export default function GiftsCard() {
             className={`env-interactive ${abierto ? "open" : ""}`}
             onClick={alternar}
             aria-expanded={abierto}
-            aria-label="Sobre: toca para abrir"
+            aria-label={t.lluviaAbrir}
             style={
               aterrizado
                 ? { opacity: 1, transform: "none", transition: "opacity .5s ease, transform 1s cubic-bezier(.2,1.4,.4,1)" }
@@ -227,7 +227,7 @@ export default function GiftsCard() {
           </button>
 
           <p className={`env-tap-hint ${aterrizado && !abierto ? "show" : ""}`} aria-hidden="true">
-            Toca para abrir
+            {t.lluviaHint}
           </p>
         </div>
       </div>

@@ -805,6 +805,48 @@ body::after {
 }
 .gb-copy:hover { background: var(--green-deep); color: var(--bg-cream); }
 
+/* ── Selector de idioma ── */
+.lang-btn {
+  display: block; width: 100%;
+  padding: .95rem 1rem;
+  border: 1.4px solid var(--gold-antique);
+  border-radius: 2px;
+  background: rgba(255,253,249,.7);
+  color: var(--olive-primary);
+  font-family: var(--font-serif), serif;
+  font-size: 1.35rem; font-weight: 600; letter-spacing: .06em;
+  cursor: pointer;
+  transition: background .25s ease, color .25s ease, transform .25s ease;
+}
+.lang-btn:hover,
+.lang-btn:focus-visible {
+  background: var(--green-deep);
+  color: var(--bg-cream);
+  border-color: var(--green-deep);
+  transform: translateY(-1px);
+}
+/* Cambiar de idioma con la invitacion ya abierta */
+.lang-switch {
+  position: fixed; top: 16px; right: 16px; z-index: 48;
+  display: inline-flex; align-items: center; gap: 2px;
+  padding: 3px; border-radius: 999px;
+  border: 1px solid rgba(140,111,67,.55);
+  background: rgba(255,253,249,.82);
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 3px 12px rgba(22,32,46,.18);
+}
+.lang-switch button {
+  border: none; background: transparent; cursor: pointer;
+  padding: .34rem .62rem; border-radius: 999px;
+  font-family: var(--font-sans), sans-serif;
+  font-size: .68rem; font-weight: 600; letter-spacing: .12em;
+  color: var(--olive-soft);
+  transition: background .2s ease, color .2s ease;
+}
+.lang-switch button[aria-pressed="true"] {
+  background: var(--green-deep); color: var(--bg-cream);
+}
+
 /* ── Muro de mensajes ── */
 .msg-input {
   width: 100%;

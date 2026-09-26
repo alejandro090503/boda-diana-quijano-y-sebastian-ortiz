@@ -2,6 +2,8 @@
 
 import AnimatedCard, { Stagger } from "../AnimatedCard";
 import { OliveBranch } from "../Ornaments";
+import { useLang } from "../../_data/idioma";
+
 
 /**
  * QR para que los invitados suban sus fotos al album compartido.
@@ -18,6 +20,7 @@ const QR =
   encodeURIComponent(ALBUM_URL);
 
 export default function AlbumCard() {
+  const { t } = useLang();
   return (
     <AnimatedCard className="tex-beige text-center py-9" anim="slideLeft">
       <Stagger>
@@ -25,13 +28,13 @@ export default function AlbumCard() {
           className="font-sans-label"
           style={{ color: "var(--olive-soft)", fontSize: "0.8rem", fontWeight: 600, marginBottom: "0.4rem" }}
         >
-          COMPARTE TUS MOMENTOS
+          {t.albumEyebrow}
         </p>
       </Stagger>
 
       <Stagger>
         <p className="font-script" style={{ color: "var(--olive-primary)", fontSize: "2.9rem", lineHeight: 1.05 }}>
-          &Aacute;lbum de fotos
+          {t.albumTitulo}
         </p>
       </Stagger>
 
@@ -46,8 +49,7 @@ export default function AlbumCard() {
           className="font-serif italic mx-auto px-2"
           style={{ color: "var(--ink-dark)", fontSize: "1.25rem", lineHeight: 1.6, maxWidth: "310px" }}
         >
-          Escanea el c&oacute;digo y sube las fotos que tomes ese d&iacute;a:
-          queremos verlo todo desde sus ojos.
+          {t.albumSub}
         </p>
       </Stagger>
 
@@ -69,7 +71,7 @@ export default function AlbumCard() {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={QR}
-              alt={`Código QR del álbum de fotos ${HASHTAG}`}
+              alt={`${t.albumQrAlt} ${HASHTAG}`}
               width={168}
               height={168}
               style={{ display: "block", width: 168, height: 168 }}

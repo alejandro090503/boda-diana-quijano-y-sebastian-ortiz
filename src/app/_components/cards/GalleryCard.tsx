@@ -3,10 +3,13 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import AnimatedCard, { Stagger } from "../AnimatedCard";
+import { useLang } from "../../_data/idioma";
+
 
 const fotos = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => `/galeria/g${n}.jpg`);
 
 export default function GalleryCard() {
+  const { t } = useLang();
   const [idx, setIdx] = useState(0);
   const [lightbox, setLightbox] = useState(false);
 
@@ -31,7 +34,7 @@ export default function GalleryCard() {
             className="font-script mb-1"
             style={{ color: "var(--olive-primary)", fontSize: "2.6rem", lineHeight: 1.1, marginTop: "1.5rem" }}
           >
-            Nuestros recuerdos
+            {t.galeriaTitulo}
           </p>
         </Stagger>
 
@@ -40,7 +43,7 @@ export default function GalleryCard() {
             className="font-serif italic"
             style={{ color: "var(--olive-primary)", opacity: 0.85, fontSize: "1.1rem", marginBottom: "1.1rem" }}
           >
-            Toca la foto para verla en grande
+            {t.galeriaSub}
           </p>
         </Stagger>
 
@@ -50,7 +53,7 @@ export default function GalleryCard() {
             {/* Flechas laterales */}
             <button
               onClick={() => go(-1)}
-              aria-label="Foto anterior"
+              aria-label={t.fotoAnterior}
               className="carousel-arrow"
               style={{ left: -14 }}
             >
@@ -58,7 +61,7 @@ export default function GalleryCard() {
             </button>
             <button
               onClick={() => go(1)}
-              aria-label="Foto siguiente"
+              aria-label={t.fotoSiguiente}
               className="carousel-arrow"
               style={{ right: -14 }}
             >
@@ -96,7 +99,7 @@ export default function GalleryCard() {
               <button
                 key={i}
                 onClick={() => setIdx(i)}
-                aria-label={`Foto ${i + 1}`}
+                aria-label={`${i + 1}`}
                 style={{
                   width: i === idx ? 18 : 7,
                   height: 7,
@@ -126,10 +129,10 @@ export default function GalleryCard() {
             transition={{ duration: 0.3 }}
             onClick={() => setLightbox(false)}
           >
-            <button onClick={(e) => { e.stopPropagation(); go(-1); }} aria-label="Anterior" className="lb-arrow" style={{ left: 10 }}>
+            <button onClick={(e) => { e.stopPropagation(); go(-1); }} aria-label={t.fotoAnterior} className="lb-arrow" style={{ left: 10 }}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M15 18l-6-6 6-6" /></svg>
             </button>
-            <button onClick={(e) => { e.stopPropagation(); go(1); }} aria-label="Siguiente" className="lb-arrow" style={{ right: 10 }}>
+            <button onClick={(e) => { e.stopPropagation(); go(1); }} aria-label={t.fotoSiguiente} className="lb-arrow" style={{ right: 10 }}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M9 6l6 6-6 6" /></svg>
             </button>
 
@@ -148,7 +151,7 @@ export default function GalleryCard() {
               </div>
               <button
                 onClick={() => setLightbox(false)}
-                aria-label="Cerrar foto"
+                aria-label={t.cerrarFoto}
                 style={{ position: "absolute", top: -16, right: -16, width: 40, height: 40, borderRadius: "50%", border: "none", cursor: "pointer", background: "var(--olive-primary)", color: "#fdfdfb", boxShadow: "0 4px 14px rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center" }}
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>

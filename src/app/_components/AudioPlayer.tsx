@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, forwardRef, useImperativeHandle } from "react";
+import { useLang } from "../_data/idioma";
 
 export interface AudioAPI {
   play: () => void;
@@ -9,6 +10,7 @@ export interface AudioAPI {
 const START_OFFSET = 0; // la canción arranca desde el principio
 
 const AudioPlayer = forwardRef<AudioAPI>(function AudioPlayer(_props, ref) {
+  const { t } = useLang();
   const [playing, setPlaying] = useState(false);
   const [visible, setVisible] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -85,7 +87,7 @@ const AudioPlayer = forwardRef<AudioAPI>(function AudioPlayer(_props, ref) {
       />
       <button
         onClick={toggle}
-        aria-label={playing ? "Pausar música" : "Reproducir música"}
+        aria-label={playing ? t.musicaPause : t.musicaPlay}
         className={`vinyl-btn ${visible ? "is-ready" : ""} ${playing ? "is-playing" : ""}`}
         type="button"
       >

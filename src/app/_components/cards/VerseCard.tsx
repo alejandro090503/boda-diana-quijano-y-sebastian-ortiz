@@ -1,8 +1,11 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useLang } from "../../_data/idioma";
+
 
 export default function VerseCard() {
+  const { t } = useLang();
   return (
     <motion.section
       className="w-[88vw] max-w-[380px] mx-auto text-center mb-12 px-4"
@@ -19,7 +22,7 @@ export default function VerseCard() {
         className="font-serif italic"
         style={{ color: "var(--ink-dark)", fontSize: "1.45rem", lineHeight: 1.8 }}
       >
-        &ldquo;Te elegiría a ti una y mil veces, en esta y en todas mis vidas.&rdquo;
+        &ldquo;{t.frase}&rdquo;
       </p>
     </motion.section>
   );

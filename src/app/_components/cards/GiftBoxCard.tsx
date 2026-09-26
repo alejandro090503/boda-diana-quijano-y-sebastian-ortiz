@@ -4,18 +4,18 @@ import { useCallback, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import AnimatedCard, { Stagger } from "../AnimatedCard";
 import { OliveBranch } from "../Ornaments";
+import { useLang } from "../../_data/idioma";
+
 
 /** Cuentas que envio el cliente para quienes prefieran transferir. */
 const BANCO = "BBVA";
 const TITULAR = "Diana Quijano";
-const CUENTAS = [
-  { etiqueta: "Cuenta", valor: "150 190 6916" },
-  { etiqueta: "Cuenta CLABE", valor: "012 180 01501906916 8" },
-];
+const CUENTAS = ["150 190 6916", "012 180 01501906916 8"];
 
 const EASE = [0.22, 0.61, 0.36, 1] as const;
 
 function Copiar({ valor }: { valor: string }) {
+  const { t } = useLang();
   const [copiado, setCopiado] = useState(false);
 
   const copiar = useCallback(async () => {
@@ -42,13 +42,13 @@ function Copiar({ valor }: { valor: string }) {
   }, [valor]);
 
   return (
-    <button type="button" onClick={copiar} className="gb-copy" aria-label={`Copiar ${valor}`}>
+    <button type="button" onClick={copiar} className="gb-copy" aria-label={`${t.copiar} ${valor}`}>
       {copiado ? (
         <>
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
             <path d="M20 6 9 17l-5-5" />
           </svg>
-          COPIADO
+          {t.copiado}
         </>
       ) : (
         <>
@@ -56,7 +56,7 @@ function Copiar({ valor }: { valor: string }) {
             <rect x="9" y="9" width="12" height="12" rx="2" />
             <path d="M5 15V5a2 2 0 0 1 2-2h10" />
           </svg>
-          COPIAR
+          {t.copiar}
         </>
       )}
     </button>
@@ -64,6 +64,11 @@ function Copiar({ valor }: { valor: string }) {
 }
 
 export default function GiftBoxCard() {
+  const { t } = useLang();
+  const cuentas = [
+    { etiqueta: t.cuenta, valor: CUENTAS[0] },
+    { etiqueta: t.clabe, valor: CUENTAS[1] },
+  ];
   const [abierto, setAbierto] = useState(false);
 
   // con el detalle abierto no se puede hacer scroll detras
@@ -87,13 +92,13 @@ export default function GiftBoxCard() {
             className="font-sans-label"
             style={{ color: "var(--olive-soft)", fontSize: "0.8rem", fontWeight: 600, marginBottom: "0.4rem" }}
           >
-            SI PREFIERES TRANSFERIR
+            {t.transfEyebrow}
           </p>
         </Stagger>
 
         <Stagger>
           <p className="font-script" style={{ color: "var(--olive-primary)", fontSize: "2.9rem", lineHeight: 1.05 }}>
-            Un detalle
+            {t.transfTitulo}
           </p>
         </Stagger>
 
@@ -108,13 +113,12 @@ export default function GiftBoxCard() {
             className="font-serif italic mx-auto px-2"
             style={{ color: "var(--ink-dark)", fontSize: "1.22rem", lineHeight: 1.6, maxWidth: "310px" }}
           >
-            Si no puedes entregarnos tu sobre ese d&iacute;a, aqu&iacute; te dejamos
-            nuestros datos.
+            {t.transfSub}
           </p>
         </Stagger>
 
         <Stagger>
-          <button type="button" className="gb-box" onClick={() => setAbierto(true)} aria-label="Abrir el detalle">
+          <button type="button" className="gb-box" onClick={() => setAbierto(true)} aria-label={t.transfAbrir}>
             <svg viewBox="0 0 200 186" aria-hidden="true">
               <defs>
                 {/* Papel marfil con el mismo grano que el resto de la invitacion */}
@@ -164,7 +168,7 @@ export default function GiftBoxCard() {
                 <circle cx="97.5" cy="53.5" r="2.6" fill="#FFF6E2" opacity=".75" />
               </g>
             </svg>
-            <span className="gb-cta">Toca el detalle</span>
+            <span className="gb-cta">{t.transfCta}</span>
           </button>
         </Stagger>
       </AnimatedCard>
@@ -175,7 +179,7 @@ export default function GiftBoxCard() {
             className="gb-backdrop"
             role="dialog"
             aria-modal="true"
-            aria-label="Datos para transferencia"
+            aria-label={t.transfTitulo}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -190,7 +194,7 @@ export default function GiftBoxCard() {
               transition={{ duration: 0.5, ease: EASE }}
               onClick={(e) => e.stopPropagation()}
             >
-              <button type="button" className="gb-close" onClick={() => setAbierto(false)} aria-label="Cerrar">
+              <button type="button" className="gb-close" onClick={() => setAbierto(false)} aria-label={t.cerrar}>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                   <path d="M18 6 6 18M6 6l12 12" />
                 </svg>
@@ -200,11 +204,11 @@ export default function GiftBoxCard() {
                 className="font-sans-label"
                 style={{ color: "var(--olive-soft)", fontSize: "0.72rem", fontWeight: 600, letterSpacing: "0.26em" }}
               >
-                CON TODO NUESTRO CARI&Ntilde;O
+                {t.transfGraciasEyebrow}
               </p>
 
               <p className="font-script" style={{ color: "var(--olive-primary)", fontSize: "2.5rem", lineHeight: 1.1, marginTop: "0.3rem" }}>
-                Gracias
+                {t.transfGracias}
               </p>
 
               <div className="foil-rule" style={{ width: 90, margin: "0.85rem auto 1.1rem" }} />
@@ -213,7 +217,7 @@ export default function GiftBoxCard() {
                 {BANCO} &middot; {TITULAR}
               </p>
 
-              {CUENTAS.map((c) => (
+              {cuentas.map((c) => (
                 <div className="gb-row" key={c.etiqueta}>
                   <div style={{ textAlign: "left", minWidth: 0 }}>
                     <p
