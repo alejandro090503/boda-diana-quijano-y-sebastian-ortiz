@@ -1,7 +1,7 @@
-.vercel
-_src/
 node_modules/
-hero-video.mp4
-
+.next/
+out/
 .vercel
-.env*
+.env*.local
+_src/
+tsconfig.tsbuildinfo

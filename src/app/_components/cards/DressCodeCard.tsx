@@ -1,0 +1,118 @@
+"use client";
+
+import AnimatedCard, { Stagger } from "../AnimatedCard";
+import { Flourish } from "../Ornaments";
+
+// Colores reservados: son los hex que el cliente marco como "a evitar"
+// (marfil, blanco, durazno claro, champan y los azules cielo de la boda),
+// agrupados en tres muestras para que se lean de un vistazo.
+const reservados = [
+  { hex: "#FFFFF0", nombre: "Blanco" },
+  { hex: "#F7E7CE", nombre: "Champán" },
+  { hex: "#89CFF0", nombre: "Azul cielo" },
+];
+
+export default function DressCodeCard() {
+  return (
+    <AnimatedCard className="tex-beige text-center py-8" anim="flip" corners={false}>
+      <img
+        src="/assets/sobre-motivo-chico.png"
+        alt=""
+        className="absolute pointer-events-none"
+        style={{ width: 110, height: "auto", top: -14, left: -14, opacity: 0.9, zIndex: 1 }}
+      />
+      <img
+        src="/assets/sobre-motivo-chico.png"
+        alt=""
+        className="absolute pointer-events-none"
+        style={{ width: 110, height: "auto", bottom: -14, right: -14, opacity: 0.9, transform: "rotate(180deg)", zIndex: 1 }}
+      />
+
+      <Stagger>
+        <p className="font-script mb-1" style={{ color: "var(--olive-primary)", fontSize: "3rem", lineHeight: 1 }}>
+          Vestimenta
+        </p>
+      </Stagger>
+
+      <Stagger>
+        <p
+          className="font-serif font-bold"
+          style={{ color: "var(--ink-dark)", fontSize: "2.6rem", letterSpacing: "0.1em", lineHeight: 1.15 }}
+        >
+          FORMAL
+          <br />
+          YUCATECO
+        </p>
+      </Stagger>
+
+      <Stagger>
+        <div className="flex justify-center my-2 w-full">
+          <Flourish color="var(--green-line)" width={140} />
+        </div>
+      </Stagger>
+
+      <Stagger>
+        <div style={{ position: "relative", zIndex: 10 }}>
+          <p
+            className="font-serif italic text-lg mt-3 px-3"
+            style={{ color: "var(--ink-dark)", lineHeight: 1.6 }}
+          >
+            <strong>Caballeros:</strong> guayabera de manga larga o ropa de lino.
+            <br />
+            <strong>Damas:</strong> vestido largo o tipo cóctel.
+          </p>
+          <p
+            className="font-serif italic text-lg mt-4 px-3"
+            style={{ color: "var(--ink-dark)", lineHeight: 1.6 }}
+          >
+            Con cariño, les pedimos <strong>no usar</strong> estos colores:
+            están reservados para la novia y el cortejo.
+          </p>
+        </div>
+      </Stagger>
+
+      <Stagger>
+        <div
+          className="flex justify-center gap-6 mt-5"
+          style={{ position: "relative", zIndex: 10 }}
+        >
+          {reservados.map((c) => (
+            <div key={c.nombre} className="flex flex-col items-center gap-2">
+              {/* Circulo del color con la diagonal roja de "no usar": el color
+                  solo no bastaba, la novia pidio que se vea prohibido. */}
+              <span
+                aria-hidden="true"
+                style={{
+                  position: "relative",
+                  width: 46,
+                  height: 46,
+                  borderRadius: "50%",
+                  backgroundColor: c.hex,
+                  border: "1px solid var(--gold-antique)",
+                  boxShadow: "0 2px 6px rgba(31,28,25,0.16)",
+                  display: "block",
+                }}
+              >
+                <svg
+                  viewBox="0 0 46 46"
+                  width="46"
+                  height="46"
+                  style={{ position: "absolute", top: -1, left: -1, display: "block" }}
+                >
+                  <circle cx="23" cy="23" r="21.5" fill="none" stroke="#b3261e" strokeWidth="2.6" />
+                  <line x1="8" y1="38" x2="38" y2="8" stroke="#b3261e" strokeWidth="2.6" strokeLinecap="round" />
+                </svg>
+              </span>
+              <span
+                className="font-sans-label"
+                style={{ color: "var(--ink-dark)", fontSize: "0.88rem", fontWeight: 600, letterSpacing: "0.12em" }}
+              >
+                {c.nombre}
+              </span>
+            </div>
+          ))}
+        </div>
+      </Stagger>
+    </AnimatedCard>
+  );
+}
