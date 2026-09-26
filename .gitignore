@@ -2,3 +2,6 @@
 _src/
 node_modules/
 hero-video.mp4
+
+.vercel
+.env*
