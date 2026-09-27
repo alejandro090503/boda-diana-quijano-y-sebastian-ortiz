@@ -73,42 +73,64 @@ export default function HeroCard() {
             </Stagger>
 
             <Stagger>
-              <div className="flex gap-2 mb-6" style={{ margin: "0 -0.75rem" }}>
-                {/* Columna izquierda: padres del novio */}
-                <div className="flex-1 text-center">
-                  <p
-                    className="font-sans-label"
-                    style={{ color: "var(--olive-soft)", fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.18em", marginBottom: "0.4rem" }}
-                  >
-                    {t.padresNovio}
-                  </p>
-                  <p className="font-serif" style={{ color: "var(--ink-dark)", fontSize: "0.92rem", lineHeight: 1.55 }}>
-                    Sebastián Ortiz Hernández
-                  </p>
-                  <p className="font-script my-0.5" style={{ color: "var(--gold-antique)", fontSize: "1.15rem", lineHeight: 1 }}>&amp;</p>
-                  <p className="font-serif" style={{ color: "var(--ink-dark)", fontSize: "0.92rem", lineHeight: 1.55 }}>
-                    Lorena del Carmen Vera Estañol
-                  </p>
-                </div>
-                <div className="flex items-center">
-                  <span style={{ width: 1, height: 72, background: "linear-gradient(to bottom, transparent, var(--gold-antique), transparent)", opacity: 0.6, display: "block" }} />
-                </div>
-                {/* Columna derecha: padres de la novia */}
-                <div className="flex-1 text-center">
-                  <p
-                    className="font-sans-label"
-                    style={{ color: "var(--olive-soft)", fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.18em", marginBottom: "0.4rem" }}
-                  >
-                    {t.padresNovia}
-                  </p>
-                  <p className="font-serif" style={{ color: "var(--ink-dark)", fontSize: "0.92rem", lineHeight: 1.55 }}>
-                    Juan Carlos Quijano Quintal
-                  </p>
-                  <p className="font-script my-0.5" style={{ color: "var(--gold-antique)", fontSize: "1.15rem", lineHeight: 1 }}>&amp;</p>
-                  <p className="font-serif" style={{ color: "var(--ink-dark)", fontSize: "0.92rem", lineHeight: 1.55 }}>
-                    Rosa Eugenia Brito Quijano
-                  </p>
-                </div>
+              {/* Rejilla de 3 columnas con la fila y la columna de cada dato
+                  puestas a mano. Las dos familias comparten FILA, asi que el
+                  rotulo, el padre, la "&" y la madre quedan a la misma altura
+                  en ambos lados aunque un nombre ocupe dos renglones. Con
+                  columnas flex sueltas "Padres de la novia" partia en dos
+                  lineas y empujaba toda su columna hacia abajo; y dejando que
+                  el grid colocara solo, el filete vertical (que ocupa todas
+                  las filas) descuadraba el reparto. */}
+              <div
+                style={{
+                  margin: "0 -0.75rem 1.5rem",
+                  display: "grid",
+                  gridTemplateColumns: "1fr auto 1fr",
+                  columnGap: "0.6rem",
+                  rowGap: "0.25rem",
+                  alignItems: "start",
+                  justifyItems: "center",
+                }}
+              >
+                <span className="font-sans-label" style={{ color: "var(--olive-soft)", fontSize: "0.58rem", fontWeight: 600, letterSpacing: "0.12em", whiteSpace: "nowrap", gridColumn: 1, gridRow: 1 }}>
+                  {t.padresNovio}
+                </span>
+                <span className="font-sans-label" style={{ color: "var(--olive-soft)", fontSize: "0.58rem", fontWeight: 600, letterSpacing: "0.12em", whiteSpace: "nowrap", gridColumn: 3, gridRow: 1 }}>
+                  {t.padresNovia}
+                </span>
+
+                <span
+                  aria-hidden="true"
+                  style={{
+                    gridColumn: 2,
+                    gridRow: "1 / -1",
+                    width: 1,
+                    alignSelf: "stretch",
+                    background: "linear-gradient(to bottom, transparent, var(--gold-antique), transparent)",
+                    opacity: 0.6,
+                  }}
+                />
+
+                <p className="font-serif" style={{ color: "var(--ink-dark)", fontSize: "0.92rem", lineHeight: 1.5, gridColumn: 1, gridRow: 2 }}>
+                  Sebastián Ortiz Hernández
+                </p>
+                <p className="font-serif" style={{ color: "var(--ink-dark)", fontSize: "0.92rem", lineHeight: 1.5, gridColumn: 3, gridRow: 2 }}>
+                  Juan Carlos Quijano Quintal
+                </p>
+
+                <p className="font-script" style={{ color: "var(--gold-antique)", fontSize: "1.15rem", lineHeight: 1, gridColumn: 1, gridRow: 3 }}>
+                  &amp;
+                </p>
+                <p className="font-script" style={{ color: "var(--gold-antique)", fontSize: "1.15rem", lineHeight: 1, gridColumn: 3, gridRow: 3 }}>
+                  &amp;
+                </p>
+
+                <p className="font-serif" style={{ color: "var(--ink-dark)", fontSize: "0.92rem", lineHeight: 1.5, gridColumn: 1, gridRow: 4 }}>
+                  Lorena del Carmen Vera Estañol
+                </p>
+                <p className="font-serif" style={{ color: "var(--ink-dark)", fontSize: "0.92rem", lineHeight: 1.5, gridColumn: 3, gridRow: 4 }}>
+                  Rosa Eugenia Brito Quijano
+                </p>
               </div>
             </Stagger>
 
