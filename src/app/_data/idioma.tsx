@@ -198,7 +198,9 @@ export const T = {
     rsvpGraciasSi: "¡Gracias por confirmar!",
     rsvpEsperamos: (n: string) => `Te esperamos, ${n}.`,
     rsvpConfirmados: (n: number, l: string) => `Confirmamos ${n} lugares: ${l}.`,
-    rsvpLimite: "Gracias por confirmar antes del",
+    rsvpLimite: "Confirma tu asistencia antes del",
+    rsvpLimiteNota:
+      "Después de esa fecha solo podremos apartar lugar para quienes ya confirmaron.",
     errLink: "Este enlace ya no está activo. Por favor pide a los novios uno nuevo.",
     errCerradas: "Las confirmaciones ya están cerradas. Por favor avísanos directamente.",
     errEnvio: "Hubo un problema al enviar. Inténtalo de nuevo.",
@@ -386,6 +388,7 @@ export const T = {
     rsvpEsperamos: (n: string) => `We'll be waiting for you, ${n}.`,
     rsvpConfirmados: (n: number, l: string) => `${n} seats confirmed: ${l}.`,
     rsvpLimite: "Please RSVP before",
+    rsvpLimiteNota: "After that date we can only save seats for those who replied.",
     errLink: "This link is no longer active. Please ask the couple for a new one.",
     errCerradas: "RSVPs are now closed. Please let us know directly.",
     errEnvio: "Something went wrong sending your RSVP. Please try again.",

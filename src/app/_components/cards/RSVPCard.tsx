@@ -570,6 +570,8 @@ export default function RSVPCard() {
             {t.rsvpLimite}
             <br />
             <span className="font-semibold">{t.limite}</span>
+            <br />
+            <span style={{ fontSize: "0.95rem", opacity: 0.85 }}>{t.rsvpLimiteNota}</span>
           </span>
         </div>
       </Stagger>
