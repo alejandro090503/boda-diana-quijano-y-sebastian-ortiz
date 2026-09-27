@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import AnimatedCard, { Stagger } from "../AnimatedCard";
@@ -15,44 +15,50 @@ const EASE = [0.22, 0.61, 0.36, 1] as const;
 
 /* WhatsApp y Messenger cortan la URL en el primer espacio o "&". El panel manda
    un token base64url en ?i= ("nombre|pases|menores") que llega intacto.
-   Se conserva ?para= para los links ya enviados. */
-function decodeInvite(tok: string): string {
+   Se conserva ?para=&pases= para los links ya enviados. */
+function decodeInvite(tok: string): { nombre: string; pases: number } {
   try {
     let b64 = tok.replace(/-/g, "+").replace(/_/g, "/");
     while (b64.length % 4) b64 += "=";
     const bin = atob(b64);
     const bytes = Uint8Array.from(bin, (c) => c.charCodeAt(0));
-    const nombre = new TextDecoder().decode(bytes).split("|")[0] || "";
-    return nombre.trim();
+    const [nombre, pases] = new TextDecoder().decode(bytes).split("|");
+    const n = parseInt(pases ?? "1", 10);
+    return { nombre: (nombre ?? "").trim(), pases: isNaN(n) || n < 1 || n > 20 ? 1 : n };
   } catch {
-    return "";
+    return { nombre: "", pases: 1 };
   }
 }
-
-/* Comparación sin acentos ni mayúsculas: quien respondió antes de tener
-   nombres asignados pudo escribirlos ligeramente distinto. */
-const clave = (x: string) =>
-  x.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
 
 export default function RSVPCard() {
   const { t } = useLang();
   const searchParams = useSearchParams();
   const token = searchParams.get("i") || "";
-  const urlPara = (token ? decodeInvite(token) : searchParams.get("para") || "").trim();
+  const desdeToken = token ? decodeInvite(token) : null;
+  const urlPara = (desdeToken ? desdeToken.nombre : searchParams.get("para") || "").trim();
+  const pasesUrl = (() => {
+    if (desdeToken) return desdeToken.pases;
+    const n = parseInt(searchParams.get("pases") ?? "1", 10);
+    return isNaN(n) || n < 1 || n > 20 ? 1 : n;
+  })();
 
   const frozen = Date.now() > DEADLINE.getTime();
-  /* Nombres que los novios asignaron en el panel: una tarjeta por cada uno */
-  const [asignados, setAsignados] = useState<string[]>([]);
-  const [choices, setChoices] = useState<Record<number, "yes" | "no">>({});
+  /* Tope: los pases que los novios asignaron en el panel */
+  const [pasesAsignados, setPasesAsignados] = useState(pasesUrl);
+  /* Lo que el invitado va a ocupar: arranca en 1 y nunca pasa del tope */
+  const [pasesAUsar, setPasesAUsar] = useState(1);
+  const [nombres, setNombres] = useState<string[]>([]);
+  const [choice, setChoice] = useState<"yes" | "no" | null>(null);
   const [enviando, setEnviando] = useState(false);
   const [gateLoading, setGateLoading] = useState(!!urlPara);
   const [cerrada, setCerrada] = useState(false);
   const [bloqueada, setBloqueada] = useState(false);
-  const [sinAsignados, setSinAsignados] = useState(false);
+  const [faltantes, setFaltantes] = useState<number[]>([]);
   const [resumen, setResumen] = useState<{ estado: "yes" | "no"; nombres: string[] } | null>(null);
   const [feedback, setFeedback] = useState("");
   const [feedbackKind, setFeedbackKind] = useState<"info" | "success" | "warn" | "error">("info");
   const [btnLabel, setBtnLabel] = useState<string>(frozen ? t.rsvpVencido : t.rsvpEnviar);
+  const feedRef = useRef<HTMLParagraphElement | null>(null);
 
   useEffect(() => {
     if (!urlPara) return;
@@ -61,28 +67,22 @@ export default function RSVPCard() {
     )
       .then((r) => r.json())
       .then((resp) => {
-        const d = resp.invitado;
-        const lista: string[] = Array.isArray(d?.nombres_asignados)
-          ? d.nombres_asignados.filter((n: string) => n && String(n).trim())
-          : [];
-        if (!lista.length) {
-          setSinAsignados(true);
-          return;
-        }
-        setAsignados(lista);
-        if (d.bloqueado) setBloqueada(true);
+        const d = resp?.invitado;
+        const tope = typeof d?.pases === "number" && d.pases > 0 && d.pases <= 20 ? d.pases : pasesUrl;
+        setPasesAsignados(tope);
+        if (d?.bloqueado) setBloqueada(true);
 
-        if (d.estado === "confirmado" || d.estado === "declino") {
-          const conf: string[] = (d.nombres_confirmados || []).map((n: string) => clave(String(n)));
-          const previas: Record<number, "yes" | "no"> = {};
-          lista.forEach((nm, i) => {
-            previas[i] = d.estado === "declino" ? "no" : conf.includes(clave(nm)) ? "yes" : "no";
-          });
-          setChoices(previas);
+        if (d && (d.estado === "confirmado" || d.estado === "declino")) {
+          const guardados: string[] = (d.nombres_confirmados || []).filter(
+            (n: string) => n && String(n).trim()
+          );
+          /* El contador arranca en cuántos pases había ocupado antes */
+          setPasesAUsar(Math.min(tope, Math.max(1, guardados.length)));
+          setNombres(guardados);
+          setChoice(d.estado === "confirmado" ? "yes" : "no");
           setBtnLabel(t.rsvpActualizar);
-          const asisten = lista.filter((_, i) => previas[i] === "yes");
-          // Con respuesta ya guardada, la sección arranca CERRADA.
-          setResumen({ estado: asisten.length ? "yes" : "no", nombres: asisten });
+          /* Con respuesta ya guardada, la sección arranca CERRADA. */
+          setResumen({ estado: d.estado === "confirmado" ? "yes" : "no", nombres: guardados });
           setCerrada(true);
         }
       })
@@ -91,33 +91,65 @@ export default function RSVPCard() {
         setFeedback(t.errCarga);
       })
       .finally(() => setGateLoading(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [urlPara]);
 
-  const elegir = (i: number, v: "yes" | "no") => {
+  const setPases = (n: number) => {
     if (frozen || bloqueada) return;
-    setChoices((prev) => ({ ...prev, [i]: v }));
+    const v = Math.max(1, Math.min(pasesAsignados, n));
+    if (v === pasesAUsar) return;
+    setPasesAUsar(v);
+    setFaltantes([]);
+    setFeedback("");
+  };
+
+  const escribirNombre = (i: number, v: string) => {
+    setNombres((prev) => {
+      const copia = prev.slice();
+      copia[i] = v;
+      return copia;
+    });
+    setFaltantes((prev) => prev.filter((x) => x !== i));
+  };
+
+  const elegir = (v: "yes" | "no") => {
+    if (frozen || bloqueada) return;
+    setChoice(v);
+    setFaltantes([]);
     setFeedback("");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (frozen || enviando || bloqueada) return;
-    if (!asignados.length) {
+    if (frozen || enviando || bloqueada || !urlPara) return;
+    if (!choice) {
       setFeedbackKind("warn");
-      setFeedback("No encontramos lugares asignados a esta invitación. Escríbenos para ayudarte.");
+      setFeedback(t.rsvpElige);
       return;
     }
-    const faltan = asignados.filter((_, i) => !choices[i]).length;
-    if (faltan > 0) {
-      setFeedbackKind("warn");
-      setFeedback(
-        `Por favor responde por cada invitado (${faltan} pendiente${faltan === 1 ? "" : "s"}).`
-      );
-      return;
-    }
-    const asisten = asignados.filter((_, i) => choices[i] === "yes");
-    const estado = asisten.length > 0 ? "confirmado" : "declino";
 
+    const asisten = choice === "yes" ? nombres.slice(0, pasesAUsar).map((n) => (n || "").trim()) : [];
+    const escritos = asisten.filter(Boolean);
+
+    if (choice === "yes") {
+      if (escritos.length === 0) {
+        setFeedbackKind("warn");
+        setFeedback(t.rsvpUnNombre);
+        return;
+      }
+      if (escritos.length < pasesAUsar) {
+        /* Se marcan los campos vacíos para que se note cuál falta */
+        const vacios: number[] = [];
+        for (let i = 0; i < pasesAUsar; i++) if (!(nombres[i] || "").trim()) vacios.push(i);
+        setFaltantes(vacios);
+        setFeedbackKind("warn");
+        setFeedback(t.rsvpFaltan(pasesAUsar, escritos.length, pasesAUsar - escritos.length));
+        feedRef.current?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+        return;
+      }
+    }
+
+    const estado = choice === "yes" ? "confirmado" : "declino";
     setEnviando(true);
     setBtnLabel(t.rsvpEnviando);
     setFeedback("");
@@ -129,8 +161,8 @@ export default function RSVPCard() {
           nombre: urlPara,
           url_boda: RSVP_URL,
           estado,
-          pases_confirmados: asisten.length,
-          nombres_confirmados: asisten,
+          pases_confirmados: estado === "confirmado" ? escritos.length : 0,
+          nombres_confirmados: estado === "confirmado" ? escritos : [],
         }),
       });
       const data = await res.json().catch(() => null);
@@ -153,17 +185,13 @@ export default function RSVPCard() {
       // Solo se da por registrada si el panel la guardó de verdad.
       if (!res.ok || !data?.ok) {
         setFeedbackKind("error");
-        setFeedback(
-          data?.error === "no_match"
-            ? t.errIdent
-            : t.errEnvio
-        );
+        setFeedback(data?.error === "no_match" ? t.errIdent : t.errEnvio);
         setBtnLabel(t.rsvpReintentar);
         return;
       }
 
       setBtnLabel(t.rsvpActualizar);
-      setResumen({ estado: asisten.length ? "yes" : "no", nombres: asisten });
+      setResumen({ estado: choice, nombres: escritos });
       setCerrada(true);
       setFeedback("");
     } catch {
@@ -184,18 +212,16 @@ export default function RSVPCard() {
           ? "#8c2f22"
           : "var(--olive-primary)";
 
-  const togglesDisabled = frozen || gateLoading || bloqueada;
+  const cerradoTodo = frozen || bloqueada;
+  const togglesDisabled = cerradoTodo || gateLoading;
   const sinLink = !urlPara;
-  /* Sin link personalizado o sin nombres asignados no hay nada que registrar */
-  const puedeResponder = !sinLink && !sinAsignados && asignados.length > 0;
+  /* Sin link personalizado no hay invitación que actualizar */
+  const puedeResponder = !sinLink;
 
   const resumenTexto = (() => {
     if (!resumen) return { titulo: "", sub: "" };
-    if (resumen.estado === "no") {
-      return {
-        titulo: t.rsvpGraciasNo,
-        sub: t.rsvpGraciasNoSub,
-      };
+    if (resumen.estado === "no" || resumen.nombres.length === 0) {
+      return { titulo: t.rsvpGraciasNo, sub: t.rsvpGraciasNoSub };
     }
     if (resumen.nombres.length === 1) {
       return { titulo: t.rsvpGraciasSi, sub: t.rsvpEsperamos(resumen.nombres[0]) };
@@ -252,7 +278,7 @@ export default function RSVPCard() {
             <p className="font-serif" style={{ color: "var(--ink-dark)", fontSize: "1.2rem", lineHeight: 1.5 }}>
               {t.rsvpTienes}{" "}
               <span className="font-semibold" style={{ color: "var(--olive-primary)" }}>
-                {asignados.length} {asignados.length === 1 ? t.rsvpPase : t.rsvpPases}
+                {pasesAsignados} {pasesAsignados === 1 ? t.rsvpPase : t.rsvpPases}
               </span>
               <br />
               {t.rsvpPara}{" "}
@@ -271,17 +297,6 @@ export default function RSVPCard() {
             style={{ color: "var(--ink-dark)", fontSize: "1.05rem", lineHeight: 1.6 }}
           >
             {t.rsvpSinLink}
-          </p>
-        </Stagger>
-      )}
-
-      {sinAsignados && (
-        <Stagger>
-          <p
-            className="font-serif italic mx-auto max-w-[360px] mb-2"
-            style={{ color: "var(--terracotta)", fontSize: "1.05rem", lineHeight: 1.6 }}
-          >
-            {t.rsvpSinAsignados}
           </p>
         </Stagger>
       )}
@@ -358,7 +373,7 @@ export default function RSVPCard() {
                 )}
               </motion.div>
             ) : (
-              /* ── Bandeja: una tarjeta por invitado asignado ── */
+              /* ── Bandeja: toggle, contador de pases y un campo por pase ── */
               <motion.form
                 key="bandeja"
                 onSubmit={handleSubmit}
@@ -368,75 +383,152 @@ export default function RSVPCard() {
                 transition={{ duration: 0.4, ease: EASE }}
                 className="max-w-[360px] mx-auto space-y-5"
               >
-                <div className="space-y-3">
-                  {asignados.map((nm, i) => {
-                    const sel = choices[i];
+                <div className="flex gap-2">
+                  {(["yes", "no"] as const).map((val) => {
+                    const activo = choice === val;
+                    const isYes = val === "yes";
                     return (
-                      <div
-                        key={`p-${i}`}
-                        className="px-4 py-3"
+                      <button
+                        key={val}
+                        type="button"
+                        onClick={() => elegir(val)}
+                        disabled={togglesDisabled}
+                        aria-pressed={activo}
+                        className="flex-1 py-3 font-serif italic transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                         style={{
                           border: `1.5px solid ${
-                            sel === "yes"
-                              ? "var(--olive-primary)"
-                              : sel === "no"
-                                ? "var(--terracotta)"
-                                : "var(--beige)"
+                            activo ? (isYes ? "var(--olive-primary)" : "var(--terracotta)") : "var(--beige)"
                           }`,
-                          background:
-                            sel === "yes"
-                              ? "rgba(31,28,25,0.07)"
-                              : sel === "no"
-                                ? "rgba(125,79,79,0.07)"
-                                : "rgba(255,253,249,0.6)",
-                          borderRadius: 14,
+                          backgroundColor: activo
+                            ? isYes
+                              ? "var(--olive-primary)"
+                              : "var(--terracotta)"
+                            : "rgba(255,253,249,0.55)",
+                          color: activo ? "var(--bg-cream)" : "var(--ink-dark)",
+                          fontSize: "1.05rem",
+                          borderRadius: 10,
                         }}
                       >
-                        <p
-                          className="font-serif font-semibold mb-2"
-                          style={{ color: "var(--ink-dark)", fontSize: "1.15rem", lineHeight: 1.3 }}
-                        >
-                          {nm}
-                        </p>
-                        <div className="flex gap-2">
-                          {(["yes", "no"] as const).map((val) => {
-                            const activo = sel === val;
-                            const isYes = val === "yes";
-                            return (
-                              <button
-                                key={val}
-                                type="button"
-                                onClick={() => elegir(i, val)}
-                                disabled={togglesDisabled}
-                                aria-pressed={activo}
-                                className="flex-1 py-2 font-serif italic transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                                style={{
-                                  border: `1.5px solid ${
-                                    activo ? (isYes ? "var(--olive-primary)" : "var(--terracotta)") : "var(--beige)"
-                                  }`,
-                                  backgroundColor: activo
-                                    ? isYes
-                                      ? "var(--olive-primary)"
-                                      : "var(--terracotta)"
-                                    : "rgba(255,253,249,0.55)",
-                                  color: activo ? "var(--bg-cream)" : "var(--ink-dark)",
-                                  fontSize: "1rem",
-                                  borderRadius: 10,
-                                }}
-                              >
-                                {isYes ? t.rsvpSi : t.rsvpNo}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </div>
+                        {isYes ? t.rsvpSi : t.rsvpNo}
+                      </button>
                     );
                   })}
                 </div>
 
+                {choice === "yes" && (
+                  <div>
+                    <p
+                      className="font-serif italic mx-auto mb-3"
+                      style={{ color: "var(--ink-dark)", fontSize: "1.05rem", lineHeight: 1.55 }}
+                    >
+                      {pasesAsignados === 1 ? t.rsvpNotaUno : t.rsvpNotaVarios(pasesAsignados)}
+                    </p>
+
+                    {pasesAsignados > 1 && (
+                      <>
+                        <div
+                          className="flex items-center justify-center gap-5 mx-auto mb-2 px-4 py-3"
+                          style={{
+                            background: "rgba(31,28,25,0.06)",
+                            border: "1px solid var(--beige)",
+                            borderRadius: 14,
+                          }}
+                        >
+                          <button
+                            type="button"
+                            onClick={() => setPases(pasesAUsar - 1)}
+                            disabled={cerradoTodo || pasesAUsar <= 1}
+                            aria-label={t.rsvpQuitarPase}
+                            className="font-serif transition-all disabled:opacity-35 disabled:cursor-not-allowed"
+                            style={{
+                              width: 46,
+                              height: 46,
+                              flexShrink: 0,
+                              borderRadius: "50%",
+                              border: "1.5px solid var(--beige)",
+                              background: "rgba(255,253,249,0.8)",
+                              color: "var(--olive-primary)",
+                              fontSize: "1.6rem",
+                              lineHeight: 1,
+                              cursor: "pointer",
+                            }}
+                          >
+                            −
+                          </button>
+                          <span
+                            className="font-script"
+                            aria-live="polite"
+                            style={{ color: "var(--olive-primary)", fontSize: "2.6rem", lineHeight: 1, minWidth: 58 }}
+                          >
+                            {pasesAUsar}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => setPases(pasesAUsar + 1)}
+                            disabled={cerradoTodo || pasesAUsar >= pasesAsignados}
+                            aria-label={t.rsvpAgregarPase}
+                            className="font-serif transition-all disabled:opacity-35 disabled:cursor-not-allowed"
+                            style={{
+                              width: 46,
+                              height: 46,
+                              flexShrink: 0,
+                              borderRadius: "50%",
+                              border: "1.5px solid var(--beige)",
+                              background: "rgba(255,253,249,0.8)",
+                              color: "var(--olive-primary)",
+                              fontSize: "1.6rem",
+                              lineHeight: 1,
+                              cursor: "pointer",
+                            }}
+                          >
+                            +
+                          </button>
+                        </div>
+                        <p
+                          className="font-sans-label"
+                          style={{
+                            color: "var(--olive-primary)",
+                            fontSize: "0.78rem",
+                            letterSpacing: "0.2em",
+                            textTransform: "uppercase",
+                          }}
+                        >
+                          {pasesAUsar >= pasesAsignados ? t.rsvpTodos : t.rsvpDePases(pasesAUsar, pasesAsignados)}
+                        </p>
+                      </>
+                    )}
+
+                    <div className="space-y-2 mt-4">
+                      {Array.from({ length: pasesAUsar }, (_, i) => (
+                        <input
+                          key={`n-${i}`}
+                          type="text"
+                          value={nombres[i] || ""}
+                          onChange={(e) => escribirNombre(i, e.target.value)}
+                          placeholder={pasesAUsar === 1 ? t.rsvpTuNombre : t.rsvpNombreN(i + 1)}
+                          aria-label={pasesAUsar === 1 ? t.rsvpTuNombre : t.rsvpNombreN(i + 1)}
+                          autoComplete="off"
+                          maxLength={60}
+                          disabled={cerradoTodo}
+                          className="w-full font-serif disabled:opacity-60"
+                          style={{
+                            padding: "13px 16px",
+                            border: `1.5px solid ${faltantes.includes(i) ? "var(--terracotta)" : "var(--beige)"}`,
+                            background: "rgba(255,253,249,0.75)",
+                            color: "var(--ink-dark)",
+                            fontSize: "1.05rem",
+                            borderRadius: 12,
+                            outline: "none",
+                          }}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 <button
                   type="submit"
-                  disabled={enviando || frozen || bloqueada}
+                  disabled={enviando || cerradoTodo}
                   className="w-full py-4 font-sans-label transition-all disabled:opacity-40 disabled:cursor-not-allowed"
                   style={{
                     backgroundColor: "var(--olive-primary)",
@@ -459,6 +551,7 @@ export default function RSVPCard() {
       {feedback && (
         <Stagger>
           <p
+            ref={feedRef}
             className="font-serif italic mt-4 mx-auto max-w-[360px]"
             style={{ color: feedbackColor, fontSize: "1.05rem", lineHeight: 1.6, textAlign: "center" }}
           >

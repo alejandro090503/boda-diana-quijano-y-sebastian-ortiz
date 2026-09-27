@@ -168,7 +168,21 @@ export const T = {
     rsvpPara: "para",
     rsvpSinLink:
       "Para confirmar necesitas abrir el enlace personalizado que te enviaron por WhatsApp. Ese enlace lleva los nombres de tu invitación; si lo abres desde un reenvío o escribiendo la dirección a mano, no podemos identificarla.",
-    rsvpSinAsignados: "No encontramos lugares asignados a esta invitación. Escríbenos para ayudarte.",
+    rsvpNotaUno: "Tienes 1 pase reservado para ti.",
+    rsvpNotaVarios: (n: number) =>
+      `Tienes ${n} pases reservados. Aumenta el número de pases que vayas a ocupar.`,
+    rsvpTodos: "Estás usando todos tus pases",
+    rsvpDePases: (usa: number, total: number) => `${usa} de ${total} pases`,
+    rsvpQuitarPase: "Quitar un pase",
+    rsvpAgregarPase: "Agregar un pase",
+    rsvpTuNombre: "Tu nombre completo",
+    rsvpNombreN: (i: number) => `Nombre del invitado ${i}`,
+    rsvpElige: "Por favor selecciona si asistirás o no.",
+    rsvpUnNombre: "Por favor escribe al menos un nombre.",
+    rsvpFaltan: (usa: number, escritos: number, faltan: number) =>
+      `Elegiste ${usa} pases pero escribiste ${escritos} nombre${escritos === 1 ? "" : "s"}. ` +
+      `Escribe ${faltan === 1 ? "el nombre que falta" : `los ${faltan} nombres que faltan`} ` +
+      "o baja el contador a los pases que vas a utilizar.",
     rsvpSi: "Asistiré",
     rsvpNo: "No asistiré",
     rsvpEnviar: "Confirmar asistencia",
@@ -341,7 +355,21 @@ export const T = {
     rsvpPara: "for",
     rsvpSinLink:
       "To RSVP you need to open the personal link they sent you on WhatsApp. That link carries the names on your invitation; if you open it from a forward or by typing the address by hand, we can't identify it.",
-    rsvpSinAsignados: "We couldn't find any seats assigned to this invitation. Please write to us and we'll help you.",
+    rsvpNotaUno: "You have 1 seat reserved for you.",
+    rsvpNotaVarios: (n: number) =>
+      `You have ${n} seats reserved. Increase the number of seats you will use.`,
+    rsvpTodos: "You are using all your seats",
+    rsvpDePases: (usa: number, total: number) => `${usa} of ${total} seats`,
+    rsvpQuitarPase: "Remove a seat",
+    rsvpAgregarPase: "Add a seat",
+    rsvpTuNombre: "Your full name",
+    rsvpNombreN: (i: number) => `Guest ${i} full name`,
+    rsvpElige: "Please choose whether you will attend.",
+    rsvpUnNombre: "Please write at least one name.",
+    rsvpFaltan: (usa: number, escritos: number, faltan: number) =>
+      `You chose ${usa} seats but wrote ${escritos} name${escritos === 1 ? "" : "s"}. ` +
+      `Write the missing name${faltan === 1 ? "" : "s"} ` +
+      "or lower the counter to the seats you will use.",
     rsvpSi: "I'll be there",
     rsvpNo: "I can't make it",
     rsvpEnviar: "Send my RSVP",
