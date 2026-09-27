@@ -45,11 +45,8 @@ export default function CoverCard() {
       style={{ height: "100dvh", overflow: "hidden" }}
     >
       <motion.div
-        className="absolute inset-0"
+        className="absolute inset-0 cover-foto"
         style={{
-          backgroundImage: "url('/portada.jpg')",
-          backgroundSize: "cover",
-          backgroundPosition: "center 30%",
           maskImage: MASCARA,
           WebkitMaskImage: MASCARA,
           opacity: fotoOpacidad,
@@ -80,7 +77,7 @@ export default function CoverCard() {
         style={{ opacity: textoOpacidad, y: textoY }}>
         <motion.p
           className="font-sans-label"
-          style={{ color: "#F7E7CE", fontSize: "0.74rem", fontWeight: 600, letterSpacing: "0.34em" }}
+          style={{ color: "#F7E7CE", fontSize: "clamp(0.74rem, 1vw, 0.95rem)", fontWeight: 600, letterSpacing: "0.34em" }}
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.35, duration: 0.9, ease: "easeOut" }}
@@ -92,7 +89,7 @@ export default function CoverCard() {
           className="font-script"
           style={{
             color: "#FFFFFF",
-            fontSize: "clamp(2.9rem, 14.5vw, 4rem)",
+            fontSize: "clamp(2.9rem, 14.5vw, 6.4rem)",
             lineHeight: 1.02,
             margin: "0.35rem 0 0",
             textShadow: "0 3px 26px rgba(12,28,52,0.55)",
@@ -106,7 +103,7 @@ export default function CoverCard() {
 
         <motion.p
           className="font-script foil"
-          style={{ fontSize: "1.9rem", lineHeight: 1, margin: "0 0 0.1rem" }}
+          style={{ fontSize: "clamp(1.9rem, 5vw, 3rem)", lineHeight: 1, margin: "0 0 0.1rem" }}
           initial={{ opacity: 0, scale: 0.85 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.8, duration: 0.8, ease: "easeOut" }}
@@ -118,7 +115,7 @@ export default function CoverCard() {
           className="font-script"
           style={{
             color: "#FFFFFF",
-            fontSize: "clamp(2.9rem, 14.5vw, 4rem)",
+            fontSize: "clamp(2.9rem, 14.5vw, 6.4rem)",
             lineHeight: 1.02,
             marginBottom: "1rem",
             textShadow: "0 3px 26px rgba(12,28,52,0.55)",
@@ -145,7 +142,7 @@ export default function CoverCard() {
         >
           <span
             className="font-sans-label"
-            style={{ color: "#F7E7CE", fontSize: "0.72rem", fontWeight: 600, letterSpacing: "0.26em" }}
+            style={{ color: "#F7E7CE", fontSize: "clamp(0.72rem, 0.95vw, 0.92rem)", fontWeight: 600, letterSpacing: "0.26em" }}
           >
             {DIA} &middot; {mes} &middot; {ANIO}
           </span>
@@ -153,7 +150,7 @@ export default function CoverCard() {
 
         <motion.p
           className="font-serif italic"
-          style={{ color: "rgba(255,255,255,0.92)", fontSize: "1.15rem", marginTop: "0.85rem" }}
+          style={{ color: "rgba(255,255,255,0.92)", fontSize: "clamp(1.15rem, 1.6vw, 1.5rem)", marginTop: "0.85rem" }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.15, duration: 0.9 }}

@@ -326,6 +326,14 @@ body::after {
 }
 
 /* ── Carrusel de recuerdos ── */
+/* El polaroid medía 240px fijos: en la tarjeta de 440px de un monitor se
+   veia diminuto. Crece con la pantalla y las flechas se separan con el. */
+.gal-marco { width: 240px; }
+@media (min-width: 900px) {
+  .gal-marco { width: 330px; }
+  .gal-marco .carousel-arrow { width: 38px; height: 38px; }
+  .gal-marco .carousel-arrow svg { width: 15px; height: 15px; }
+}
 .carousel-arrow {
   position: absolute;
   top: 50%;
@@ -653,6 +661,11 @@ body::after {
   background: var(--bg-cream);
 }
 .hosp-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+@media (min-width: 900px) {
+  .hosp-carousel { max-width: 400px; }
+  .hosp-photo { width: 236px; height: 236px; }
+  .hosp-arrow { top: 126px; }
+}
 .hosp-arrow {
   position: absolute;
   top: 101px;
@@ -805,6 +818,25 @@ body::after {
 }
 .gb-copy:hover { background: var(--green-deep); color: var(--bg-cream); }
 
+/* ══ Pantallas grandes ══════════════════════════════════════════════
+   La invitacion se diseno vertical. En un monitor ancho la foto de la
+   portada, que es 9:16, se ampliaba con `cover` hasta dejar solo una
+   franja central: se veia la reja y los novios quedaban fuera de cuadro.
+   De 900px en adelante se sirve un recorte apaisado de la misma foto.
+   Las fotos tambien crecen: a tamano de movil se veian diminutas en una
+   tarjeta de 440px. */
+.cover-foto {
+  background-image: url("/portada.jpg");
+  background-size: cover;
+  background-position: center 30%;
+}
+@media (min-width: 900px) {
+  .cover-foto {
+    background-image: url("/portada-wide.jpg");
+    background-position: center 46%;
+  }
+}
+
 /* ── Retrato circular del lugar (parroquia / quinta) ── */
 .lugar-foto {
   width: 154px; height: 154px;
@@ -816,6 +848,9 @@ body::after {
   background: var(--bg-cream);
 }
 .lugar-foto img { width: 100%; height: 100%; object-fit: cover; display: block; }
+@media (min-width: 900px) {
+  .lugar-foto { width: 208px; height: 208px; }
+}
 
 /* ── Selector de idioma ── */
 .lang-btn {

@@ -548,16 +548,17 @@ export default function RSVPCard() {
         </Stagger>
       )}
 
+      {/* Sin <Stagger>: este aviso se monta DESPUES de que la tarjeta ya entro,
+          y los hijos de Stagger que nacen tarde se quedan en opacity:0 porque
+          el disparo por scroll (whileInView once) ya paso y no vuelve. */}
       {feedback && (
-        <Stagger>
-          <p
-            ref={feedRef}
-            className="font-serif italic mt-4 mx-auto max-w-[360px]"
-            style={{ color: feedbackColor, fontSize: "1.05rem", lineHeight: 1.6, textAlign: "center" }}
-          >
-            {feedback}
-          </p>
-        </Stagger>
+        <p
+          ref={feedRef}
+          className="font-serif italic mt-4 mx-auto max-w-[360px]"
+          style={{ color: feedbackColor, fontSize: "1.05rem", lineHeight: 1.6, textAlign: "center" }}
+        >
+          {feedback}
+        </p>
       )}
 
       <Stagger>

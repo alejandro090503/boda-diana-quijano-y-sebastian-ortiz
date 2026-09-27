@@ -49,7 +49,7 @@ export default function GalleryCard() {
 
         {/* Carrusel: una foto tipo polaroid a la vez */}
         <Stagger>
-          <div className="relative mx-auto" style={{ width: 240 }}>
+          <div className="relative mx-auto gal-marco">
             {/* Flechas laterales */}
             <button
               onClick={() => go(-1)}
