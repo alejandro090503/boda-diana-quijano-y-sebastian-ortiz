@@ -22,14 +22,7 @@ export default function CeremonyCard() {
       />
 
       <Stagger>
-        <div className="lugar-foto mt-2">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/lugares/parroquia.jpg" alt={NOMBRE_IGLESIA} />
-        </div>
-      </Stagger>
-
-      <Stagger>
-        <div className="flex justify-center mt-3 mb-1">
+        <div className="flex justify-center mt-2 mb-1">
           <OliveBranch width={118} color="var(--green-line)" />
         </div>
       </Stagger>
@@ -39,7 +32,13 @@ export default function CeremonyCard() {
           <p className="font-script" style={{ color: "var(--olive-primary)", fontSize: "3.2rem", lineHeight: 1.1 }}>
             {t.ceremonia}
           </p>
-          <p className="font-serif font-semibold mt-2" style={{ color: "var(--ink-dark)", fontSize: "2.6rem" }}>
+
+          <div className="lugar-foto" style={{ marginTop: "1.1rem", marginBottom: "1.35rem" }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/lugares/parroquia.jpg" alt={NOMBRE_IGLESIA} />
+          </div>
+
+          <p className="font-serif font-semibold" style={{ color: "var(--ink-dark)", fontSize: "2.6rem" }}>
             {t.horaCeremonia}
           </p>
 
