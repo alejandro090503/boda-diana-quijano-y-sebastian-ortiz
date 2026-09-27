@@ -92,6 +92,11 @@ body::before {
   background-repeat: no-repeat;
   pointer-events: none;
 }
+/* En un monitor ancho el marmol vertical (1400px) se estiraba y salian bandas
+   y grano; de 900px en adelante se sirve una version apaisada. */
+@media (min-width: 900px) {
+  body::before { background-image: url("/fondo-marmol-wide.jpg"); }
+}
 
 /* Velo crema encima del marmol: sube el contraste de las tarjetas contra el
    fondo sin apagar el verde. */
@@ -853,6 +858,14 @@ body::after {
 }
 
 /* ── Selector de idioma ── */
+.gate-marmol {
+  background-image: url("/fondo-marmol.jpg");
+  background-size: cover;
+  background-position: center;
+}
+@media (min-width: 900px) {
+  .gate-marmol { background-image: url("/fondo-marmol-wide.jpg"); }
+}
 .lang-btn {
   display: block; width: 100%;
   padding: .95rem 1rem;

@@ -24,14 +24,7 @@ export default function LangGate({ onPick }: { onPick: (l: Lang) => void }) {
       transition={{ duration: 0.5 }}
     >
       {/* el marmol de fondo, igual que en el resto de la invitacion */}
-      <div
-        className="absolute inset-0"
-        style={{
-          backgroundImage: "url('/fondo-marmol.jpg')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      />
+      <div className="absolute inset-0 gate-marmol" />
       <div
         className="absolute inset-0"
         style={{
