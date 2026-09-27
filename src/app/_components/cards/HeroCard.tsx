@@ -76,6 +76,12 @@ export default function HeroCard() {
               <div className="flex gap-2 mb-6" style={{ margin: "0 -0.75rem" }}>
                 {/* Columna izquierda: padres del novio */}
                 <div className="flex-1 text-center">
+                  <p
+                    className="font-sans-label"
+                    style={{ color: "var(--olive-soft)", fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.18em", marginBottom: "0.4rem" }}
+                  >
+                    {t.padresNovio}
+                  </p>
                   <p className="font-serif" style={{ color: "var(--ink-dark)", fontSize: "0.92rem", lineHeight: 1.55 }}>
                     Sebastián Ortiz Hernández
                   </p>
@@ -85,10 +91,16 @@ export default function HeroCard() {
                   </p>
                 </div>
                 <div className="flex items-center">
-                  <span style={{ width: 1, height: 50, background: "linear-gradient(to bottom, transparent, var(--gold-antique), transparent)", opacity: 0.6, display: "block" }} />
+                  <span style={{ width: 1, height: 72, background: "linear-gradient(to bottom, transparent, var(--gold-antique), transparent)", opacity: 0.6, display: "block" }} />
                 </div>
                 {/* Columna derecha: padres de la novia */}
                 <div className="flex-1 text-center">
+                  <p
+                    className="font-sans-label"
+                    style={{ color: "var(--olive-soft)", fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.18em", marginBottom: "0.4rem" }}
+                  >
+                    {t.padresNovia}
+                  </p>
                   <p className="font-serif" style={{ color: "var(--ink-dark)", fontSize: "0.92rem", lineHeight: 1.55 }}>
                     Juan Carlos Quijano Quintal
                   </p>

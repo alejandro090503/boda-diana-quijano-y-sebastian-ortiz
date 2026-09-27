@@ -22,7 +22,14 @@ export default function CeremonyCard() {
       />
 
       <Stagger>
-        <div className="flex justify-center mt-2 mb-3">
+        <div className="lugar-foto mt-2">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/lugares/parroquia.jpg" alt={NOMBRE_IGLESIA} />
+        </div>
+      </Stagger>
+
+      <Stagger>
+        <div className="flex justify-center mt-3 mb-1">
           <OliveBranch width={118} color="var(--green-line)" />
         </div>
       </Stagger>

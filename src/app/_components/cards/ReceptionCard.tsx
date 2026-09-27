@@ -99,7 +99,14 @@ export default function ReceptionCard() {
       </Stagger>
 
       <Stagger>
-        <div className="flex justify-center mt-1">
+        <div className="lugar-foto mt-3">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/lugares/quinta.jpg" alt="Quinta Montes Molina" />
+        </div>
+      </Stagger>
+
+      <Stagger>
+        <div className="flex justify-center mt-3">
           <OliveBranch width={100} color="var(--green-line)" />
         </div>
       </Stagger>

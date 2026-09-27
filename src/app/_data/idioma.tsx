@@ -42,6 +42,8 @@ export const T = {
 
     heroAmor1: "Con todo nuestro amor",
     heroAmor2: "y el de nuestras familias",
+    padresNovio: "Padres del novio",
+    padresNovia: "Padres de la novia",
     heroInvita: "Tenemos el honor de invitarles a",
     heroBoda: "nuestra boda",
 
@@ -213,6 +215,8 @@ export const T = {
 
     heroAmor1: "With all our love",
     heroAmor2: "and that of our families",
+    padresNovio: "Parents of the groom",
+    padresNovia: "Parents of the bride",
     heroInvita: "We are honored to invite you to",
     heroBoda: "our wedding",
 
