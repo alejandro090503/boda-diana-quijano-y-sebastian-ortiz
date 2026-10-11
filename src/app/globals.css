@@ -977,3 +977,18 @@ body::after {
   position: relative;
   display: inline-block;
 }
+
+/* ── Album de fotos (estandar Elysium) ── */
+.album-qr { display: inline-flex; flex-direction: column; align-items: center; gap: 16px; }
+.album-qr.bloqueado img { filter: blur(7px); opacity: 0.75; }
+.album-qr.bloqueado .album-btn { pointer-events: none; opacity: 0.45; }
+.album-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 46px; padding: 12px 28px; border-radius: 999px;
+  background: var(--olive-primary); color: #fff; border: 1px solid var(--olive-primary);
+  font-size: 0.85rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
+  text-decoration: none; box-shadow: 0 8px 22px rgba(22, 32, 46, 0.2);
+}
+.album-btn:active { transform: scale(0.97); }
+.album-aviso { margin-top: 1.1rem; }
+.album-aviso-oculto { display: none; }
