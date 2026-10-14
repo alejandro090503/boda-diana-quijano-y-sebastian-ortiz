@@ -27,7 +27,7 @@ export const T = {
     mes: (m: number, esMes: string) => esMes,
     /** dd de mes de aaaa */
     fechaLarga: "26 de diciembre de 2026",
-    limite: "12 de octubre 2026",
+    limite: "20 de octubre 2026",
 
     gateTitulo: "Elige tu idioma",
     gateEs: "Español",
@@ -117,7 +117,7 @@ export const T = {
       "La ceremonia religiosa es en Umán y la recepción en Paseo de Montejo, en Mérida: calcula el traslado entre una y otra.",
       "Te esperamos puntuales a las 11:00 de la mañana; nos hace mucha ilusión que nos acompañen desde la misa.",
       "Los pases de tu invitación son los que aparecen en tu confirmación y son intransferibles.",
-      "Confirma tu asistencia antes del 12 de octubre de 2026 para poder apartar tu lugar.",
+      "Confirma tu asistencia antes del 20 de octubre de 2026 para poder apartar tu lugar.",
     ],
 
     hospedaje: "Hospedaje",
@@ -218,7 +218,7 @@ export const T = {
   en: {
     mes: (m: number) => MESES_EN[m],
     fechaLarga: "December 26, 2026",
-    limite: "October 12, 2026",
+    limite: "October 20, 2026",
 
     gateTitulo: "Choose your language",
     gateEs: "Español",
@@ -308,7 +308,7 @@ export const T = {
       "The church ceremony is in Umán and the reception on Paseo de Montejo, in Mérida: please allow time to travel between them.",
       "We'll be waiting for you at 11:00 in the morning; it would mean a lot to have you with us from the ceremony.",
       "The seats on your invitation are the ones shown in your RSVP and cannot be transferred.",
-      "Please RSVP before October 12, 2026 so we can save your seat.",
+      "Please RSVP before October 20, 2026 so we can save your seat.",
     ],
 
     hospedaje: "Where to stay",
